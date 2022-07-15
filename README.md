@@ -4,6 +4,14 @@ This repo deploys custom Minio Labs using Terraform.
 
 This is in **ALPHA** and major changes will be made before it is ready for general consumption.
 
+- [Minio Labs Terraform](#minio-labs-terraform)
+  - [Requirements](#requirements)
+  - [Components Deployed](#components-deployed)
+  - [IMPORTANT NOTICE](#important-notice)
+  - [Install Instructions](#install-instructions)
+  - [Teardown Instructions](#teardown-instructions)
+  - [About Minio](#about-minio)
+
 ## Requirements
 - Terraform installed on your local machine (https://learn.hashicorp.com/tutorials/terraform/install-cli)
 - A cloud account and keys for:
