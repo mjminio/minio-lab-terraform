@@ -27,7 +27,7 @@ This is in **ALPHA** and major changes will be made before it is ready for gener
 ## IMPORTANT NOTICE
 You will incur some cost as a result of deploying this to your cloud provider. Minio is not responsible for those costs.
 
-Deployments are provided "AS-IS" with not guarantee on availability or complete functionality. These will be tested regularly, but ultimately you are responsible for deploying / maintaining / tearing down these systems.
+Deployments are provided "AS-IS" with no guarantee on availability or complete functionality. These will be tested regularly, but ultimately you are responsible for deploying / maintaining / tearing down these systems.
 
 ## Install Instructions
 - Make sure pre-requisites are complete
