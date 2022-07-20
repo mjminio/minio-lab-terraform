@@ -75,7 +75,7 @@ resource "aws_instance" "minio_lab_server" {
   destination = "/home/${var.user}/minio/docker-compose.yml"
   }
 
- provisioner "file" {
+  provisioner "file" {
   source      = "assets/static/nginx.conf"
   destination = "/home/${var.user}/minio/nginx.conf"
   }
