@@ -1,11 +1,9 @@
-# General variables
+# General User variables
+variable "deployment_name" {}
 variable "user" {}
 variable "minio_password" {}
-variable "code_server_version" {}
 variable "code_server_password" {}
-variable "lab_repo_url" {
-  type        = list(string)
-}
+variable "shutdown_after_time" {}
 
 # Hetzner (hcloud) variables
 variable "hcloud_enabled" {}
@@ -31,3 +29,8 @@ variable "aws_region" {}
 variable "aws_instance_count" {}
 variable "aws_instance_image" {}
 variable "aws_instance_size" {}
+
+variable "environment_systemd_directory" {}
+variable "docker_compose_version" {}
+variable "code_server_version" {}
+variable "lab_repo_url" {}

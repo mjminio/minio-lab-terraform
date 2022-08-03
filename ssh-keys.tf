@@ -4,7 +4,7 @@ resource "tls_private_key" "gen_ssh_key" {
 }
 
 resource "local_file" "ssh_key" {
-  filename = "./files/private-key.pem"
+  filename = "./ansible/files/${var.deployment_name}/${var.deployment_name}-private-key.pem"
   content = tls_private_key.gen_ssh_key.private_key_pem
   file_permission = "0600"
 }

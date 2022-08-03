@@ -1,0 +1,6 @@
+---
+- include: security.yml
+- include: sysctl.yml
+- include: limits.yml
+- include: packages.yml
+- include: config.yml

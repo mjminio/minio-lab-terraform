@@ -1,0 +1,44 @@
+---
+- name: Clone Lab Repo
+  ansible.builtin.git:
+    repo: "{{ lab_repo_url }}"
+    dest: /home/{{ user }}/minio/labs
+    depth: 1
+  tags: lab-server, lab-repo
+  ignore_errors: yes
+
+- name: Update Repo
+  ansible.builtin.shell: git fetch origin main && git reset --hard origin/main
+  args:
+    chdir: /home/{{ user }}/minio/labs
+  tags: lab-repo-update
+
+- name: Change owner of /home/user/minio/labs folder
+  shell: chown -R {{ user }}:{{ user }} /home/{{ user }}/minio/labs
+  tags: lab-server, lab-repo, lab-repo-update
+
+# - name: Remove .git folder from lab repo
+#   ansible.builtin.file:
+#     path: /ab/labs/.git
+#     state: absent
+#   tags: lab-server, lab-repo, lab-repo-update
+
+- name: Find all of the README files inside this directory
+  find:
+    paths: "/home/{{ user }}/minio/labs"
+    patterns: "README.md,*.yml"
+    recurse: yes
+  register: repos
+  tags: lab-server, lab-repo, lab-repo-update
+
+- name: Run facts module to get latest information
+  setup:
+  tags: lab-server, lab-repo, lab-repo-update
+
+- name: Replace LABSERVERNAME with the local DNS hostname in the files
+  replace:
+    path: "{{ item.path }}"
+    regexp: 'LABSERVERNAME'
+    replace: '{{ inventory_hostname }}'
+  with_items: "{{ repos.files }}"
+  tags: lab-server, lab-repo, lab-repo-update

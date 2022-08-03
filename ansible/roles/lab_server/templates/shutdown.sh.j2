@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if awk '{ exit ($1 < ({{ shutdown_after_time }} * 3600)) }' /proc/uptime; then
+    wall -n "This Minio Lab Server will shut down in 1 minutes based on cron job configured. This system was set to shutdown after {{ shutdown_after_time }} hours of uptime."
+    sudo shutdown -h 1
+fi

@@ -1,0 +1,18 @@
+---
+- hosts: all
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: security
+
+- hosts: lab_servers
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: docker
+    - role: lab_server
+    - role: certs/self-signed
+    - role: code-server
+    - role: k3s
+    - role: minio
+    - role: post-deploy

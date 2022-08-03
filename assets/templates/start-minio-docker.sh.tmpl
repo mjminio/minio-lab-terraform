@@ -1,8 +1,0 @@
-#!/bin/bash
-
-%{ for index, ip in hcloud_minio_ips ~}
-ssh -o "UserKnownHostsFile=/dev/null" -o StrictHostKeyChecking=no -i files/private-key.pem ${user}@${hcloud_minio_ips[index]} docker-compose -f /home/${user}/docker/docker-compose.yml up -d
-%{ endfor ~}
-%{ for index, ip in do_minio_ips ~}
-ssh -o "UserKnownHostsFile=/dev/null" -o StrictHostKeyChecking=no -i files/private-key.pem ${user}@${do_minio_ips[index]} docker-compose -f /home/${user}/docker/docker-compose.yml up -d
-%{ endfor ~}

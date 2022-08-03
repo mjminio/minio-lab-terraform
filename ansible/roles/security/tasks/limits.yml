@@ -1,0 +1,44 @@
+---
+- name: Limits - Add or modify hard nofile limits - wildcard domain
+  pam_limits:
+    domain: '*'
+    limit_type: hard
+    limit_item: nofile
+    value: "65535"
+    use_max: yes
+  tags:
+    - limits
+    - security
+
+- name: Limits - Add or modify hard nproc limits - wildcard domain
+  pam_limits:
+    domain: '*'
+    limit_type: hard
+    limit_item: nproc
+    value: "4096"
+    use_max: yes
+  tags:
+    - limits
+    - security
+
+- name: Limits - Add or modify soft nofile limits - wildcard domain
+  pam_limits:
+    domain: '*'
+    limit_type: soft
+    limit_item: nofile
+    value: "65535"
+    use_max: yes
+  tags:
+    - limits
+    - security
+
+- name: Limits - Add or modify soft nproc limits - wildcard domain
+  pam_limits:
+    domain: '*'
+    limit_type: soft
+    limit_item: nproc
+    value: "4096"
+    use_max: yes
+  tags:
+    - limits
+    - security

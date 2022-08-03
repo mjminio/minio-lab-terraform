@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo <<EOF
 VSCode Server Links:
 HCloud Servers:
 %{ for index, ip in hcloud_minio_ips ~}
@@ -26,3 +27,4 @@ http://${do_minio_ips[index]}:9000
 
 Minio Username: ${user}
 Minio Password: ${minio_password}
+EOF

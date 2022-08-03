@@ -1,5 +1,0 @@
-#!/bin/bash
-
-%{ for index, name in name ~}
-mc alias set ${name} http://${minio_ips[index]}:9000 ${user} ${minio_password} --api S3v4
-%{ endfor ~}

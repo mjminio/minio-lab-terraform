@@ -1,0 +1,220 @@
+- name: Set SELinux to disabled state
+  ansible.posix.selinux:
+    state: disabled
+  when: ansible_distribution in ['CentOS', 'Red Hat Enterprise Linux']
+
+- name: Enable IPv4 forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    state: present
+    reload: yes
+
+- name: Enable IPv6 forwarding
+  sysctl:
+    name: net.ipv6.conf.all.forwarding
+    value: "1"
+    state: present
+    reload: yes
+
+- name: Add br_netfilter to /etc/modules-load.d/
+  copy:
+    content: "br_netfilter"
+    dest: /etc/modules-load.d/br_netfilter.conf
+    mode: "u=rw,g=,o="
+  when: ansible_distribution in ['CentOS', 'Red Hat Enterprise Linux']
+
+- name: Load br_netfilter
+  community.general.modprobe:
+    name: br_netfilter
+    state: present
+  when: ansible_distribution in ['CentOS', 'Red Hat Enterprise Linux']
+
+- name: Set bridge-nf-call-iptables (just to be sure)
+  sysctl:
+    name: "{{ item }}"
+    value: "1"
+    state: present
+    reload: yes
+  when: ansible_distribution in ['CentOS', 'Red Hat Enterprise Linux']
+  loop:
+    - net.bridge.bridge-nf-call-iptables
+    - net.bridge.bridge-nf-call-ip6tables
+
+- name: Add /usr/local/bin to sudo secure_path
+  lineinfile:
+    line: 'Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin'
+    regexp: "Defaults(\\s)*secure_path(\\s)*="
+    state: present
+    insertafter: EOF
+    path: /etc/sudoers
+    validate: 'visudo -cf %s'
+  when: ansible_distribution in ['CentOS', 'Red Hat Enterprise Linux']
+
+- name: Return motd to registered var
+  ansible.builtin.command: sudo echo 'IP={{ ansible_hostname }}' | sudo tee -a /etc/profile
+
+- name: Set a hostname
+  ansible.builtin.hostname:
+    name: "minio-lab-server"
+
+- name: Add hostname to /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '^127\.0\.0\.1[ \t]+localhost'
+    line: '127.0.0.1 localhost minio-lab-server'
+    state: present
+  tags: hostsfile
+
+- name: Add local hostname to 127.0.1.1 in /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: '^127\.0\.1\.1.*'
+    line: '127.0.1.1 minio-lab-server'
+    insertafter: '^127\.0\.0\.1.*'
+  tags: hostsfile
+
+- name: Install apt packages
+  apt:
+    name:
+    - acl
+    - apache2-utils
+    - zip
+    - build-essential
+    - ca-certificates
+    - curl
+    - fonts-firacode
+    - gnupg
+    - hibagent
+    - htop
+    - haveged
+    - jq
+    - locales
+    - lsb-release
+    - python3-pip
+    - man
+    - net-tools
+    - openssl
+    - software-properties-common
+    - ssh
+    - sudo
+    - telnet
+    - unzip
+    - vim
+    - zsh
+    - libfontconfig1
+    - libgtk-3-0
+    - libxi6
+    - libxrender1
+    - libxtst6
+    state: present
+    update_cache: true
+  register: apt_action
+  retries: 100
+  until: apt_action is success or ('Failed to lock apt for exclusive operation' not in apt_action.msg and '/var/lib/dpkg/lock' not in apt_action.msg)
+
+- name: Retrieve helm binary archive.
+  unarchive:
+    src: https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz
+    dest: /tmp
+    creates: /usr/local/bin/helm
+    remote_src: yes
+  tags: lab-server, helm
+
+- name: Move helm binary into place.
+  command: cp /tmp/linux-amd64/helm /usr/local/bin/helm
+  args:
+    creates: /usr/local/bin/helm
+  tags: lab-server, helm
+
+- name: Fetch krew
+  get_url:
+    url: "https://github.com/kubernetes-sigs/krew/releases/download/v0.4.3/krew-linux_amd64.tar.gz"
+    dest: /tmp/krew.tar.gz
+  tags: lab-server
+
+- name: Make tempdir for krew
+  file:
+    path: /tmp/krew
+    state: directory
+  tags: lab-server
+
+- name: Unarchive krew
+  unarchive:
+    src: /tmp/krew.tar.gz
+    dest: /tmp/krew
+    remote_src: true
+  tags: lab-server
+
+- name: Set fact Amd64 fact on x86_64 platforms
+  set_fact:
+    linux_platform: amd64
+  when: ansible_architecture == "x86_64"
+  tags: lab-server
+
+- name: Copy krew plugin to /usr/local/bin
+  copy:
+    src: "/tmp/krew/krew-{{ ansible_system|lower }}_{{ linux_platform }}"
+    dest: /usr/local/bin/kubectl-krew
+    mode: 0755
+    remote_src: true
+  tags: lab-server
+
+- name: Run Krew Update
+  shell: /usr/local/bin/kubectl krew update
+  args:
+    creates: /root/.krew/index/plugins/krew_plugins.yaml
+  tags: lab-server
+
+- name: Enable EC2 spot hibernation agent
+  shell: /usr/bin/enable-ec2-spot-hibernation
+  when: "'aws' in ansible_kernel"
+  tags: lab-server
+
+- name: change user shell to zsh
+  user:
+    name: "{{ user }}"
+    shell: /bin/zsh
+  tags: lab-server
+
+- name: change addl user shell to zsh
+  user:
+    name: "{{ user }}"
+    shell: /bin/zsh
+  tags: lab-server
+
+- name: Create home/user/labs directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/minio/labs
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  tags: lab-server
+
+- name: Copy shutdown.sh file
+  template:
+    src: "shutdown.sh.j2"
+    dest: "/home/{{ user }}/shutdown.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+    force: yes
+  tags: lab-server
+
+- name: Create cron for shutdown command
+  ansible.builtin.cron:
+    name: "shutdown host after x hours"
+    minute: "*/5"
+    job: "/home/{{ user }}/shutdown.sh"
+  tags: lab-server
+
+- name: Copy private key
+  ansible.builtin.copy:
+    src: files/{{ deployment_name }}/{{ deployment_name }}-private-key.pem
+    dest: "/home/{{ user }}/.ssh/id_rsa.pem"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0600
+    force: yes
+  tags: lab-server

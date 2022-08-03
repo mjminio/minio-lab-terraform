@@ -1,0 +1,23 @@
+---
+- name: Change ownership of /minio directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/minio
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  tags: postdeploy
+
+- name: Check if reboot required
+  stat:
+    path: /var/run/reboot-required
+  register: reboot_required_file
+  tags:
+    - never
+    - reboot
+
+- name: Reboot if required
+  reboot:
+  when: reboot_required_file.stat.exists == true
+  tags:
+    - never
+    - reboot

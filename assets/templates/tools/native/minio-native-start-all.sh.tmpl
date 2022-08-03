@@ -1,0 +1,6 @@
+#!/bin/bash
+
+
+%{ for index, ip in server_ips ~}%{ if can(server_ips) }
+ssh -o "UserKnownHostsFile=/dev/null" -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa.pem ${user}@${ip} /home/${user}/minio/tools/deploy/native/minio-native-start.sh
+%{ endif }%{ endfor ~}
