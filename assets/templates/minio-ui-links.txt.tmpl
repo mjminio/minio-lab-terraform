@@ -1,29 +1,15 @@
-#!/bin/bash
-
 echo <<EOF
 VSCode Server Links:
-HCloud Servers:
-%{ for index, ip in hcloud_minio_ips ~}
-https://${hcloud_minio_ips[index]}:8080
-%{ endfor ~}
-DO Droplets:
-%{ for index, ip in do_minio_ips ~}
-https://${do_minio_ips[index]}:8080
-%{ endfor ~}
+
+%{ for index, ip in server_ips ~}%{ if can(server_ips) }https://${ip}:8080
+%{ endif }%{ endfor ~}
 
 VSCode Server Password: ${code_server_password}
 
 NOTE: These Minio links will only be accessible after you run your setup script for Minio. These will work with Docker or Native installs.
 
-HCloud Servers:
-%{ for index, ip in hcloud_minio_ips ~}
-http://${hcloud_minio_ips[index]}:9000
-%{ endfor ~}
-
-DO Droplets:
-%{ for index, ip in do_minio_ips ~}
-http://${do_minio_ips[index]}:9000
-%{ endfor ~}
+%{ for index, ip in server_ips ~}%{ if can(server_ips) }https://${ip}:9000
+%{ endif }%{ endfor ~}
 
 Minio Username: ${user}
 Minio Password: ${minio_password}

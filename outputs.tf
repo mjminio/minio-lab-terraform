@@ -80,6 +80,20 @@ resource "local_file" "minio_native_start_all" {
   depends_on = [hcloud_server.minio_lab_server]
 }
 
+resource "local_file" "minio_ui" {
+  content  = templatefile("./assets/templates/minio-ui-links.txt.tmpl", {
+      server_names = local.names
+      server_ips = local.ips
+      user = var.user
+      minio_password = var.minio_password,
+      code_server_password = var.code_server_password,
+      G = "\\e[32m"
+      E = "\\e[0m"
+      }
+    )
+  filename = "ansible/files/${var.deployment_name}/minio-ui-links.txt"
+}
+
 # ## Server Setup Scripts
 # resource "local_file" "install_code_server" {
 #   content  = templatefile("./assets/templates/code-server.sh.tmpl", {
@@ -141,19 +155,6 @@ resource "local_file" "minio_native_start_all" {
 #   depends_on = [hcloud_server.minio_lab_server]
 # }
 
-# resource "local_file" "minio_ui" {
-#   content  = templatefile("./assets/templates/minio-ui-links.txt.tmpl", {
-#       do_minio_ips = digitalocean_droplet.minio_lab_server[*].ipv4_address,
-#       hcloud_minio_ips = hcloud_server.minio_lab_server[*].ipv4_address,
-#       user = var.user,
-#       minio_password = var.minio_password,
-#       code_server_password = var.code_server_password,
-#       G = "\\e[32m"
-#       E = "\\e[0m"
-#       }
-#     )
-#   filename = "./files/minio-ui-links.sh"
-# }
 
 # # General Outputs
 # output "ssh-key" {
