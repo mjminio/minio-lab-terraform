@@ -26,10 +26,5 @@ resource "hcloud_server" "minio_lab_server" {
     type = "minio"
   }
   user_data = "${data.template_file.hcloud_init[0].rendered}"
-
-  provisioner "local-exec" {
-    command = "mkdir -p ansible/files/${var.deployment_name}"
-  }
-  
 }
 

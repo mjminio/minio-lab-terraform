@@ -1,4 +1,10 @@
 echo <<EOF
+Servers:
+
+%{ for index, host in host_info ~}
+${host}
+%{ endfor ~}
+
 VSCode Server Links:
 
 %{ for index, ip in server_ips ~}%{ if can(server_ips) }https://${ip}:8080
@@ -13,4 +19,5 @@ NOTE: These Minio links will only be accessible after you run your setup script 
 
 Minio Username: ${user}
 Minio Password: ${minio_password}
+
 EOF
