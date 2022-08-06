@@ -20,7 +20,7 @@
       . /etc/profile
       mkcert -install
       update-ca-certificates
-      mkcert -cert-file /home/{{ user }}/certs/public.crt -key-file /home/{{ user }}/certs/private.key {{ inventory_hostname }}
+      mkcert -cert-file /home/{{ user }}/certs/public.crt -key-file /home/{{ user }}/certs/private.key {{ ansible_host }}
       openssl verify -verbose -CAfile ~/.local/share/mkcert/rootCA.pem /home/{{ user }}/certs/public.crt
       mkdir -p /home/{{ user }}/.minio/certs
       cp /home/{{ user }}/certs/* /home/{{ user }}/.minio/certs/

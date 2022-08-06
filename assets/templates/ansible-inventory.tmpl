@@ -1,9 +1,9 @@
 [lab_servers]
-%{ for index, name in hcloud_name ~}%{ if can(hcloud_name) }${hcloud_minio_ips[index]} ansible_host=${hcloud_minio_ips[index]}
+%{ for index, name in hcloud_name ~}%{ if can(hcloud_name) }${hcloud_name[index]} ansible_host=${hcloud_minio_ips[index]}
 %{ endif }%{ endfor ~}
-%{ for index, name in do_name ~}%{ if can(do_name) }${do_minio_ips[index]} ansible_host=${do_minio_ips[index]}
+%{ for index, name in do_name ~}%{ if can(do_name) }${do_name[index]} ansible_host=${do_minio_ips[index]}
 %{ endif }%{ endfor ~}
-%{ for index, name in aws_name ~}%{ if can(aws_name) }${aws_minio_ips[index]} ansible_host=${aws_minio_ips[index]}
+%{ for index, name in aws_name ~}%{ if can(aws_name) }${aws_name[index]} ansible_host=${aws_minio_ips[index]}
 %{ endif }%{ endfor ~}
 
 [all:vars]
