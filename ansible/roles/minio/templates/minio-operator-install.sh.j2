@@ -1,0 +1,37 @@
+#!/bin/bash
+# Source: https://github.com/minio/operator
+
+set -e
+
+G="\e[32m"
+E="\e[0m"
+
+wget -q -O - https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+k3d cluster create minio-lab-cluster --volume /mnt/data:/tmp/k3dvol --api-port 6443 --servers 1 --agents 3 -p 80:80@loadbalancer -p 443:443@loadbalancer -p "30000-30010:30000-30010@server:0" --k3s-arg "--tls-san={{ ansible_host }}@server:*" --k3s-arg "--no-deploy=traefik@server:*"
+
+echo "Waiting 30 seconds for the k3d/k3s cluster to come online..."
+sleep 30
+
+# helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+# helm install ingress-nginx ingress-nginx/ingress-nginx --set "controller.extraArgs.enable-ssl-passthrough=true"
+
+kubectl create namespace minio-tenant-1
+
+kubectl krew install minio
+wget https://github.com/minio/operator/releases/latest/download/kubectl-minio_linux_amd64.zip -P /tmp/
+sudo unzip /tmp/kubectl-minio_linux_amd64.zip -d /usr/local/bin
+sudo chmod +x /usr/local/bin/kubectl-minio
+
+kubectl minio init
+
+echo "Waiting 30 seconds for the MinIO Operator comes online..."
+sleep 30
+
+echo -----------------------------------------------
+echo -e ${G}"Minio Operator Install Complete"
+echo -e ${G}"You can now run the following command from the VSCode console to access the Minio Operator console:"${E}
+echo "kubectl minio proxy -n minio-operator"
+echo -e ${G}"Visit the following address to login to the console using the provided JWT token:${E}
+echo "http://{{ ansible_host }}:9090"
+echo -----------------------------------------------
+

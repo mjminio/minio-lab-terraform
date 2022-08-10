@@ -88,11 +88,24 @@ resource "local_file" "minio_ui" {
       minio_password = var.minio_password,
       code_server_password = var.code_server_password,
       host_info = "${formatlist( "%s: %s", local.names, local.ips)}"
-      G = "\\e[32m"
-      E = "\\e[0m"
       }
     )
   filename = "ansible/files/${var.deployment_name}/minio-ui-links.txt"
+}
+
+resource "local_file" "minio_ui_sh" {
+  content  = templatefile("./assets/templates/minio-ui-links.sh.tmpl", {
+      server_names = local.names
+      server_ips = local.ips
+      user = var.user
+      minio_password = var.minio_password,
+      code_server_password = var.code_server_password,
+      host_info = "${formatlist( "%s: %s", local.names, local.ips)}"
+      green = "\\e[32m"
+      end = "\\e[0m"
+      }
+    )
+  filename = "ansible/files/${var.deployment_name}/minio-ui-links.sh"
 }
 
 # ## Server Setup Scripts

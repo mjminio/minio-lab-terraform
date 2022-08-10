@@ -151,3 +151,22 @@
     mode: 0755
     force: yes
   tags: minio
+
+#Minio Operator Setup
+- name: Copy Minio Operator script
+  template:
+    src: "minio-operator-install.sh.j2"
+    dest: "/home/{{ user }}/minio/tools/deploy/k8s/operator/minio-operator-install.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+- name: copy k8s uninstall
+  ansible.builtin.copy:
+    src: files/k8s/operator/uninstall-minio-operator.sh
+    dest: "/home/{{ user }}/minio/tools/deploy/k8s/operator/uninstall-minio-operator.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio

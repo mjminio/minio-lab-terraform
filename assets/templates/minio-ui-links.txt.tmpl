@@ -1,4 +1,4 @@
-echo <<EOF
+## Below are the details about your environment. Please use the links and provided credentials to access.
 Servers:
 
 %{ for index, host in host_info ~}
@@ -19,5 +19,3 @@ NOTE: These Minio links will only be accessible after you run your setup script 
 
 Minio Username: ${user}
 Minio Password: ${minio_password}
-
-EOF

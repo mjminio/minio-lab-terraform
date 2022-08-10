@@ -1,6 +1,6 @@
 resource "aws_key_pair" "minio_lab_key" {
   count      = var.aws_enabled ? 1 : 0
-  key_name   = "minio-lab-key"
+  key_name   = "${var.deployment_name}-minio-lab-key"
   public_key = tls_private_key.gen_ssh_key.public_key_openssh
 }
 
@@ -55,7 +55,7 @@ resource "aws_instance" "minio_lab_server" {
   vpc_security_group_ids = ["${aws_security_group.minio_allow_all[0].id}"]
 
   tags = {
-    Name = "minio-aws-server-${count.index}"
+    Name = "${var.deployment_name}-minio-aws-${count.index}"
   }
 
 }

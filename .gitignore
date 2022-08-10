@@ -10,6 +10,7 @@ TODO.md
 *.wip
 ansible/files
 ansible/inventory
+/terraform.tfstate.d
 
 
 #Include

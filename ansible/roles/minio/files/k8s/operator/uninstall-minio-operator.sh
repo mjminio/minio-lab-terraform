@@ -1,3 +1,3 @@
 #!/bin/bash
 
-/usr/local/bin/k3s-uninstall.sh
+k3d cluster delete minio-lab-cluster 

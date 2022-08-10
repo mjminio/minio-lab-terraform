@@ -52,7 +52,7 @@
   when: code.stat.exists == False
 
 - name: Link code-server
-  ansible.builtin.command: ln -s /usr/lib/code-server/code-server-{{ code_server_version }}-linux-amd64/bin/code-server /usr/local/bin/code-server
+  ansible.builtin.command: ln -sf /usr/lib/code-server/code-server-{{ code_server_version }}-linux-amd64/bin/code-server /usr/local/bin/code-server
   tags: code-server
   when: code.stat.exists == False
 

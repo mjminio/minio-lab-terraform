@@ -2,7 +2,7 @@
 
 resource "hcloud_ssh_key" "minio_lab_key" {
   count       = var.hcloud_enabled ? 1 : 0
-  name       = "minio_lab_key"
+  name       = "${var.deployment_name}_minio_lab_key"
   public_key = tls_private_key.gen_ssh_key.public_key_openssh
 }
 
@@ -17,7 +17,7 @@ data "template_file" "hcloud_init" {
 
 resource "hcloud_server" "minio_lab_server" {
   count       = var.hcloud_enabled ? var.hcloud_server_count : 0
-  name        = "minio-hcloud-server-${count.index}"
+  name        = "${var.deployment_name}-minio-hcloud-${count.index}"
   image       = var.hcloud_os_type
   server_type = var.hcloud_server_type
   location    = var.hcloud_location
