@@ -29,8 +29,8 @@
     group: "{{ user }}"
     mode: 0775
   loop:
-    - /home/{{ user }}/minio/tools/deploy/docker/docker-compose/
-    - /home/{{ user }}/minio/tools/deploy/docker/docker-cli/
+    - /home/{{ user }}/minio/tools/deploy/docker/docker-compose/single
+    - /home/{{ user }}/minio/tools/deploy/docker/docker-compose/distributed
     - /home/{{ user }}/minio/tools/deploy/native/
     - /home/{{ user }}/minio/tools/deploy/mc/
     - /home/{{ user }}/minio/tools/deploy/k8s/operator/
@@ -57,43 +57,45 @@
     force: yes
   tags: minio
 
-#Minio Docker Setup
-- name: Copy minio docker-compose file
+#Minio Docker Single Setup
+- name: Copy minio single docker-compose file
   template:
-    src: "docker-compose.yml.j2"
-    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/docker-compose.yml"
+    src: "single-docker-compose.yml.j2"
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/single/docker-compose.yml"
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0755
   tags: minio
 
-- name: Copy nginx.conf
+- name: Copy single nginx.conf
   ansible.builtin.copy:
-    src: files/docker/nginx.conf
-    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/nginx.conf"
+    src: files/docker/single/nginx.conf
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/single/nginx.conf"
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0755
     force: yes
   tags: minio
 
-- name: Copy start docker-compose script
+- name: Copy start single docker-compose script
   template:
-    src: "minio-docker-compose-start.sh.j2"
-    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/minio-docker-compose-start.sh"
+    src: "files/docker/single/minio-docker-compose-start.sh"
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/single/minio-docker-compose-start.sh"
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0755
   tags: minio
 
-- name: Copy stop docker-compose script
+- name: Copy stop single docker-compose script
   template:
-    src: "minio-docker-compose-stop.sh.j2"
-    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/minio-docker-compose-stop.sh"
+    src: "files/docker/single/minio-docker-compose-stop.sh"
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/single/minio-docker-compose-stop.sh"
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0755
   tags: minio
+
+#Minio Docker Distributed Setup
 
 #Minio Systemd Local Setup
 - name: Copy minio systemd file

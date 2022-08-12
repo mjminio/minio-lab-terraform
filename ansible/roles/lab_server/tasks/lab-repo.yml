@@ -35,10 +35,18 @@
   setup:
   tags: lab-server, lab-repo, lab-repo-update
 
-- name: Replace LABSERVERNAME with the local DNS hostname in the files
+- name: Replace [LABSERVERNAME] with the local DNS hostname in the files
   replace:
     path: "{{ item.path }}"
-    regexp: 'LABSERVERNAME'
-    replace: '{{ inventory_hostname }}'
+    regexp: '[LABSERVERNAME]'
+    replace: '{{ ansible_host }}'
+  with_items: "{{ repos.files }}"
+  tags: lab-server, lab-repo, lab-repo-update
+
+- name: Replace [USER] with user defined in variables
+  replace:
+    path: "{{ item.path }}"
+    regexp: '[USER]'
+    replace: '{{ user }}'
   with_items: "{{ repos.files }}"
   tags: lab-server, lab-repo, lab-repo-update
