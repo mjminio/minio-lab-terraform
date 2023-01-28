@@ -1,10 +1,10 @@
-# Minio Labs Terraform
+# Minio Training Labs Terraform
 
 This repo deploys custom Minio Labs using Terraform.
 
 This is in **ALPHA** and major changes will be made before it is ready for general consumption.
 
-- [Minio Labs Terraform](#minio-labs-terraform)
+- [Minio Training Labs Terraform](#minio-training-labs-terraform)
   - [Requirements](#requirements)
   - [Components Deployed](#components-deployed)
   - [IMPORTANT NOTICE](#important-notice)

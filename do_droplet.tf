@@ -18,7 +18,7 @@ data "template_file" "do_init" {
 resource "digitalocean_droplet" "minio_lab_server" {
   count       = var.do_enabled ? var.do_droplet_count : 0
   image       = var.do_os_type
-  name        = "${var.deployment_name}-minio-do-${count.index}"
+  name        = "${var.deployment_name}-do-${count.index}"
   region      = var.do_region
   size        = var.do_droplet_size
   ssh_keys = [digitalocean_ssh_key.minio_lab_key[0].id]

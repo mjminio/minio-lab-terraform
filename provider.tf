@@ -9,6 +9,10 @@ terraform {
       source = "digitalocean/digitalocean"
       version = "~> 2.0"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 3.0"
+    }
   }
 }
 
@@ -27,4 +31,8 @@ provider "aws" {
   skip_credentials_validation = true
   skip_requesting_account_id  = true
   skip_metadata_api_check     = true
+}
+
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
 }

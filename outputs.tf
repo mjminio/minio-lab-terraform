@@ -9,6 +9,7 @@ resource "local_file" "ansible_inventory" {
       private_key = "./files/${var.deployment_name}/${var.deployment_name}-private-key.pem",
       user = var.user,
       deployment_name = var.deployment_name,
+      environment_domain = var.environment_domain
       }
     )
   filename = "./ansible/inventory/${var.deployment_name}/${var.deployment_name}-inventory"
@@ -35,9 +36,33 @@ resource "local_file" "ansible_all" {
       code_server_password = var.code_server_password
       shutdown_after_time = var.shutdown_after_time
       minio_password = var.minio_password
+      environment_domain = var.environment_domain
+      dns_service = var.dns_service
+      letsencrypt_email = var.letsencrypt_email
       }
     )
   filename = "./ansible/inventory/${var.deployment_name}/group_vars/all.yml"
+}
+
+resource "local_file" "cloudflare_ini" {
+  content  = templatefile("./assets/templates/cloudflare.ini.tmpl", {
+      cloudflare_email = var.cloudflare_email
+      cloudflare_api_token = var.cloudflare_api_token
+      }
+    )
+  filename = "./ansible/files/${var.deployment_name}/cloudflare.ini"
+}
+
+resource "local_file" "haproxy_config" {
+  content  = templatefile("./assets/templates/haproxy.cfg.tmpl", {
+      server_name = hcloud_server.minio_lab_server[*].name,
+      lab_server_ips = hcloud_server.minio_lab_server[*].ipv4_address,
+      deployment_name = var.deployment_name,
+      environment_domain = var.environment_domain
+      }
+    )
+  filename = "./ansible/files/${var.deployment_name}/haproxy.cfg"
+  depends_on = [hcloud_server.minio_lab_server]
 }
 
 resource "local_file" "mc_setup" {

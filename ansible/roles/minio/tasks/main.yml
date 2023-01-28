@@ -97,6 +97,43 @@
 
 #Minio Docker Distributed Setup
 
+- name: Copy minio distributed docker-compose file
+  template:
+    src: "distributed-docker-compose.yml.j2"
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/distributed/docker-compose.yml"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+- name: Copy distributed nginx.conf
+  ansible.builtin.copy:
+    src: files/docker/distributed/nginx.conf
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/distributed/nginx.conf"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+    force: yes
+  tags: minio
+
+- name: Copy start distributed docker-compose script
+  template:
+    src: "files/docker/distributed/minio-docker-compose-start.sh"
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/distributed/minio-docker-compose-start.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+- name: Copy stop distributed docker-compose script
+  template:
+    src: "files/docker/distributed/minio-docker-compose-stop.sh"
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/distributed/minio-docker-compose-stop.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
 #Minio Systemd Local Setup
 - name: Copy minio systemd file
   template:

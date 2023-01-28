@@ -1,0 +1,30 @@
+version: '3'
+services:
+
+  certbot:
+    image: certbot/dns-cloudflare
+    volumes:
+      - /home/{{ user }}/certbot:/etc/letsencrypt
+      - /home/{{ user }}/certbot/nginx.conf:/etc/nginx/nginx.conf
+      - /home/{{ user }}/certbot/cloudflare.ini:/root/cloudflare.ini
+    command: >-
+      certonly --dns-cloudflare
+      --dns-cloudflare-credentials /root/cloudflare.ini
+      --dns-cloudflare-propagation-seconds 60
+      --email {{ letsencrypt_email }}
+      --agree-tos --no-eff-email
+      --force-renewal
+      -d {{ inventory_hostname }}
+      -d *.{{ inventory_hostname }}
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: "always"
+    volumes:
+      - /home/{{ user }}/certbot/nginx.conf:/etc/nginx/nginx.conf
+      - /home/{{ user }}/certbot:/etc/letsencrypt
+
+volumes:
+  certbot_etc:

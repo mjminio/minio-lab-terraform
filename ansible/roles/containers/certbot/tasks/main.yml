@@ -1,0 +1,165 @@
+---
+- name: Create certbot directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/certbot
+    state: directory
+    mode: '0755'
+  tags: certbot
+
+- name: Create certs/live directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/certs/live
+    state: directory
+    mode: '0755'
+  tags: certbot
+
+- name: Create certs/archive directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/certs/archive
+    state: directory
+    mode: '0755'
+  tags: certbot
+
+- name: Copy nginx config file
+  template:
+    src: "nginx.conf.j2"
+    dest: "/home/{{ user }}/certbot/nginx.conf"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: certbot
+
+- name: Copy Cloudflare docker-compose config file
+  template:
+    src: "docker-compose-cloudflare.yml.j2"
+    dest: "/home/{{ user }}/certbot/docker-compose.yml"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: certbot
+  when: dns_service == "cloudflare"
+
+- name: Copy cloudflare.ini file
+  ansible.builtin.copy:
+    src: files/{{ deployment_name }}/cloudflare.ini
+    dest: /home/{{ user }}/certbot
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0777'
+  tags: certbot
+  when: dns_service == "cloudflare"
+
+- name: Copy ssl-dhparams.pem file
+  ansible.builtin.copy:
+    src: files/ssl-dhparams.pem
+    dest: /home/{{ user }}/certbot
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0777'
+  tags: certbot
+
+- name: Check if cert has already been created
+  stat:
+    path: /home/{{ user }}/certs/live/{{ inventory_hostname }}/fullchain.pem
+  register: certbot
+  tags: certbot
+
+- name: Create and start certbot container
+  community.docker.docker_compose:
+    project_src: /home/{{ user }}/certbot
+  register: output
+  tags: certbot
+  when: certbot.stat.exists == false
+
+- name: Waiting approx 90 seconds for certificate to be created. (It's how the certbot container works, what do you want from me?)
+  wait_for:
+    path: /home/{{ user }}/certbot/live/{{ inventory_hostname }}/fullchain.pem
+    state: present
+  tags: certbot
+  when: certbot.stat.exists == False
+
+- name: copy certbot/live
+  ansible.builtin.command: cp -r /home/{{ user }}/certbot/live /home/{{ user }}/certs
+  tags: certbot
+  when: certbot.stat.exists == false
+
+- name: copy certbot/archive
+  ansible.builtin.command: cp -r /home/{{ user }}/certbot/archive /home/{{ user }}/certs
+  tags: certbot
+  when: certbot.stat.exists == false
+
+- name: combine cert.pem and privkey.pem for haproxy
+  ansible.builtin.shell: 
+    cmd: cat fullchain.pem privkey.pem | tee cert-bundle.pem
+    chdir: /home/{{ user }}/certs/live/{{ inventory_hostname }}/
+  tags: certbot
+
+- name: Create /etc/haproxy directory for haproxy
+  ansible.builtin.file:
+    path: /etc/haproxy
+    state: directory
+    mode: '0777'
+  tags: certbot
+
+- name: Copy cert-bundle.pem file for haproxy
+  ansible.builtin.copy:
+    remote_src: yes
+    src: /home/{{ user }}/certs/live/{{ inventory_hostname }}/cert-bundle.pem
+    dest: /etc/haproxy/cert-bundle.pem
+    owner: root
+    group: root
+    mode: '0755'
+  tags: certbot
+
+- name: Create public.crt file for code-server
+  ansible.builtin.copy:
+    remote_src: yes
+    src: /home/{{ user }}/certs/live/{{ inventory_hostname }}/fullchain.pem
+    dest: /home/{{ user }}/certs/public.crt
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  tags: certbot
+
+- name: Create private.key file for code-server
+  ansible.builtin.copy:
+    remote_src: yes
+    src: /home/{{ user }}/certs/live/{{ inventory_hostname }}/privkey.pem
+    dest: /home/{{ user }}/certs/private.key
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  tags: certbot
+
+- name: Remove certbot container
+  community.docker.docker_compose:
+    project_src: /home/{{ user }}/certbot
+    build: no
+    state: present
+    stopped: yes
+  tags: certbot, certbot-compose-down
+  when: certbot.stat.exists == False
+
+- name: Remove certbot container
+  community.docker.docker_compose:
+    project_src: /home/{{ user }}/certbot
+    build: no
+    state: absent
+  register: output
+  tags: certbot, certbot-compose-down
+  when: certbot.stat.exists == False
+
+- name: Remove certbot directory to hide our tracks, err, for cleanliness...
+  ansible.builtin.file:
+    path: /home/{{ user }}/certbot
+    state: absent
+  tags: certbot
+
+- name: Change ownership of cert files
+  ansible.builtin.file:
+    path: /home/{{ user }}/certs
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+    recurse: yes
+  tags: certbot

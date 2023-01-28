@@ -99,6 +99,7 @@
     - ssh
     - sudo
     - telnet
+    - tree
     - unzip
     - vim
     - zsh

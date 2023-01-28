@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker-compose -f /home/{{ user }}/docker/docker-compose/single/docker-compose.yml up -d
+docker-compose -f /home/{{ user }}/minio/tools/deploy/docker/docker-compose/single/docker-compose.yml up -d

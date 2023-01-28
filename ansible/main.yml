@@ -11,7 +11,8 @@
   roles:
     - role: docker
     - role: lab_server
-    - role: certs/self-signed
+    - role: containers/certbot
+    - role: haproxy
     - role: code-server
     - role: k3s
     - role: minio

@@ -55,7 +55,7 @@ resource "aws_instance" "minio_lab_server" {
   vpc_security_group_ids = ["${aws_security_group.minio_allow_all[0].id}"]
 
   tags = {
-    Name = "${var.deployment_name}-minio-aws-${count.index}"
+    Name = "${var.deployment_name}-aws-${count.index}"
   }
 
 }

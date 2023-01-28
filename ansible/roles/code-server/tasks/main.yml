@@ -92,6 +92,7 @@
     group: "{{ user }}"
     mode: 0755
     force: no
+  register: code_workspace
   tags: code-server
 
 - name: Copy code-server settings.json file
@@ -102,17 +103,29 @@
     group: "{{ user }}"
     mode: 0755
     force: yes
+  register: code_settings
   tags: code-server
+
+- name: Check if codelab exists
+  remote_user: "{{ user }}"
+  become: no
+  stat:
+      path: /home/{{ user }}/code-server/extensions/codelab
+  register: codelab_dir
+  tags: code-server, codelab-ext
 
 - name: Extract codelab.zip to /home/user/code-server/extensions
   ansible.builtin.unarchive:
     src: files/codelab.zip
     dest: /home/{{ user }}/code-server/extensions
     creates:
+  register: code_lab
+  when: not codelab_dir.stat.exists
   tags: code-server, codelab-ext
 
 - name: Restart Code-server
   ansible.builtin.service:
     name: code-server
     state: restarted
+  when: code_workspace.changed and code_settings.changed and code_lab.changed
   tags: code-server, codelab-ext

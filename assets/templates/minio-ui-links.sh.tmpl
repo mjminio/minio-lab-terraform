@@ -12,7 +12,8 @@ echo -e %{ for index, ip in server_ips ~}%{ if can(server_ips) }https://${ip}:80
 
 echo -e $${G}VSCode Password$${E}: ${code_server_password}
 
-echo -e $${G}NOTE: These Minio links will only be accessible after you run your setup script via VSCode for Minio. These will work with Docker or Native installs.$${E}
+echo -e $${G}IMPORTANT NOTE: These Minio UI links will only be accessible after you run your setup script via VSCode for Minio.$${E}
+echo -e $${G}These will work with Docker or Native installs.$${E}
 echo -e $${G}Minio Links:$${E}
 echo -e %{ for index, ip in server_ips ~}%{ if can(server_ips) }https://${ip}:9000 / %{ endif }%{ endfor ~}
 
