@@ -1,0 +1,131 @@
+---
+- name: Create /home/user/code-server directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/code-server
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  tags: code-server
+
+- name: Create /home/user/code-server/extensions directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/code-server/extensions
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  tags: code-server
+
+- name: Create /usr/lib/code-server directory
+  ansible.builtin.file:
+    path: /usr/lib/code-server
+    state: directory
+    mode: '0755'
+  tags: code-server
+
+- name: Install pre-reqs
+  apt:
+    name:
+    - net-tools
+    - openssl
+    - build-essential
+    state: present
+  tags: code-server
+
+- name: Download and unarchive code-server
+  ansible.builtin.unarchive:
+    src: https://github.com/cdr/code-server/releases/download/v{{ code_server_version }}/code-server-{{ code_server_version }}-linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: yes
+  tags: code-server, code-server-download
+
+- name: Get stats of the FS object
+  ansible.builtin.stat:
+    path: /usr/lib/code-server/code-server-{{ code_server_version }}-linux-amd64/bin/code-server
+  register: code
+  tags: code-server
+
+- name: Move code-server
+  ansible.builtin.command: mv /tmp/code-server-{{ code_server_version }}-linux-amd64 /usr/lib/code-server
+  tags: code-server, code-server-move
+  when: code.stat.exists == False
+
+- name: Link code-server
+  ansible.builtin.command: ln -sf /usr/lib/code-server/code-server-{{ code_server_version }}-linux-amd64/bin/code-server /usr/local/bin/code-server
+  tags: code-server
+  when: code.stat.exists == False
+
+- name: modify code-server
+  ansible.builtin.command: chmod a+x /usr/lib/code-server
+  tags: code-server
+
+- name: Copy code-server service file
+  template:
+    src: "code-server.service.j2"
+    dest: "{{ systemd_dir }}/code-server.service"
+    owner: root
+    group: root
+    mode: 0755
+  tags: code-server
+
+- name: Enable and check code-server service
+  systemd:
+    name: code-server
+    daemon_reload: yes
+    state: started
+    enabled: yes
+    no_block: yes
+  tags: code-server
+
+- name: Check to ensure code-server service actually started
+  ansible.builtin.service:
+    name: code-server
+    state: started
+  tags: code-server
+
+- name: Copy code-server workspace file
+  template:
+    src: "default.code-workspace.j2"
+    dest: "/home/{{ user }}/code-server/User/"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+    force: no
+  register: code_workspace
+  tags: code-server
+
+- name: Copy code-server settings.json file
+  ansible.builtin.copy:
+    src: files/settings.json
+    dest: "/home/{{ user }}/code-server/User/"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+    force: yes
+  register: code_settings
+  tags: code-server
+
+- name: Check if codelab exists
+  remote_user: "{{ user }}"
+  become: no
+  stat:
+      path: /home/{{ user }}/code-server/extensions/codelab
+  register: codelab_dir
+  tags: code-server, codelab-ext
+
+- name: Extract codelab.zip to /home/user/code-server/extensions
+  ansible.builtin.unarchive:
+    src: files/codelab.zip
+    dest: /home/{{ user }}/code-server/extensions
+    creates:
+  register: code_lab
+  when: not codelab_dir.stat.exists
+  tags: code-server, codelab-ext
+
+- name: Restart Code-server
+  ansible.builtin.service:
+    name: code-server
+    state: restarted
+  when: code_workspace.changed and code_settings.changed and code_lab.changed
+  tags: code-server, codelab-ext

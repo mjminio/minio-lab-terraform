@@ -1,0 +1,13 @@
+[Unit]
+Description=code-server
+
+[Service]
+User={{ user }}
+Group={{ user }}
+Type=simple
+Environment=PASSWORD={{ code_server_password }}
+ExecStart=/usr/local/bin/code-server --bind-addr 0.0.0.0:11443 --cert-host {{ inventory_hostname }} --user-data-dir /home/{{ user }}/code-server --auth password --cert /home/{{ user }}/certs/public.crt --cert-key /home/{{ user }}/certs/private.key /home/{{ user }}/minio
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

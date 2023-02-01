@@ -1,0 +1,36 @@
+---
+- name: Packages - APT - Install OS packages
+  apt:
+    pkg: [
+      'apt-listchanges',
+      'apt-transport-https', 
+      'auditd', 
+      'ca-certificates', 
+      'fail2ban', 
+      'unattended-upgrades' 
+    ]
+    state: latest
+    update_cache: yes
+  register: apt_action
+  retries: 100
+  until: apt_action is success or ('Failed to lock apt for exclusive operation' not in apt_action.msg and '/var/lib/dpkg/lock' not in apt_action.msg)
+  tags:
+    - packages
+    - security
+
+- name: Packages - APT - Upgrade software to the latest version
+  apt:
+    name: "*"
+    update_cache: yes
+    cache_valid_time: 86400
+    state: latest
+    force_apt_get: true
+    autoclean: yes
+    autoremove: yes
+  register: apt_action
+  retries: 100
+  until: apt_action is success or ('Failed to lock apt for exclusive operation' not in apt_action.msg and '/var/lib/dpkg/lock' not in apt_action.msg)
+  tags:
+    - packages
+    - security
+    - upgrade

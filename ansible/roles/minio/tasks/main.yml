@@ -1,0 +1,233 @@
+- name: Create /mnt/data
+  ansible.builtin.file:
+    path: /mnt/data
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0777'
+  tags: minio
+
+- name: Download minio server native binary
+  ansible.builtin.get_url:
+    url: https://dl.min.io/server/minio/release/linux-amd64/minio
+    dest: /usr/local/bin
+    mode: '0777'
+  tags: minio
+
+- name: Download minio client native binary
+  ansible.builtin.get_url:
+    url: https://dl.min.io/client/mc/release/linux-amd64/mc
+    dest: /usr/local/bin
+    mode: '0777'
+  tags: minio
+
+- name: create tools dir
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0775
+  loop:
+    - /home/{{ user }}/minio/tools/deploy/core
+    - /home/{{ user }}/minio/tools/deploy/docker/docker-compose/single
+    - /home/{{ user }}/minio/tools/deploy/docker/docker-compose/distributed
+    - /home/{{ user }}/minio/tools/deploy/native/
+    - /home/{{ user }}/minio/tools/deploy/mc/
+    - /home/{{ user }}/minio/tools/deploy/k8s/operator/
+  tags: minio
+
+## Minio Core 3 cluster Deploy
+
+- name: Copy mc-lab-3-cluster-setup.sh
+  template:
+    src: "core/mc-lab-3-cluster-setup.sh.j2"
+    dest: "/home/{{ user }}/minio/tools/deploy/core/mc-lab-3-cluster-setup.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+- name: Copy mc-lab-3-cluster-delete.sh
+  ansible.builtin.copy:
+    src: files/core/mc-lab-3-cluster-delete.sh
+    dest: "/home/{{ user }}/minio/tools/deploy/core/mc-lab-3-cluster-delete.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+    force: yes
+  tags: minio
+
+## MC Client Setup
+- name: Copy minio mc client setup script
+  ansible.builtin.copy:
+    src: ../../files/{{ deployment_name }}/minio-client-setup.sh
+    dest: "/home/{{ user }}/minio/tools/deploy/mc/minio-client-setup.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+    force: yes
+  tags: minio
+
+- name: Copy minio mc site repl script
+  ansible.builtin.copy:
+    src: ../../files/{{ deployment_name }}/minio-site-repl-setup.sh
+    dest: "/home/{{ user }}/minio/tools/deploy/mc/minio-site-repl-setup.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+    force: yes
+  tags: minio
+
+#Minio Docker Single Setup
+- name: Copy minio single docker-compose file
+  template:
+    src: "single-docker-compose.yml.j2"
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/single/docker-compose.yml"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+- name: Copy single nginx.conf
+  ansible.builtin.copy:
+    src: files/docker/single/nginx.conf
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/single/nginx.conf"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+    force: yes
+  tags: minio
+
+- name: Copy start single docker-compose script
+  template:
+    src: "files/docker/single/minio-docker-compose-start.sh"
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/single/minio-docker-compose-start.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+- name: Copy stop single docker-compose script
+  template:
+    src: "files/docker/single/minio-docker-compose-stop.sh"
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/single/minio-docker-compose-stop.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+#Minio Docker Distributed Setup
+
+- name: Copy minio distributed docker-compose file
+  template:
+    src: "distributed-docker-compose.yml.j2"
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/distributed/docker-compose.yml"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+- name: Copy distributed nginx.conf
+  ansible.builtin.copy:
+    src: files/docker/distributed/nginx.conf
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/distributed/nginx.conf"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+    force: yes
+  tags: minio
+
+- name: Copy start distributed docker-compose script
+  template:
+    src: "files/docker/distributed/minio-docker-compose-start.sh"
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/distributed/minio-docker-compose-start.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+- name: Copy stop distributed docker-compose script
+  template:
+    src: "files/docker/distributed/minio-docker-compose-stop.sh"
+    dest: "/home/{{ user }}/minio/tools/deploy/docker/docker-compose/distributed/minio-docker-compose-stop.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+#Minio Systemd Local Setup
+- name: Copy minio systemd file
+  template:
+    src: "minio-systemd.j2"
+    dest: "/etc/systemd/system/minio.service"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+- name: Copy minio systemd file example
+  template:
+    src: "minio-systemd.j2"
+    dest: "/home/{{ user }}/minio/tools/deploy/native/minio.service.example"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+- name: Copy minio systemd config file
+  template:
+    src: "minio-config.j2"
+    dest: "/etc/default/minio"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+- name: Copy minio systemd config file example
+  template:
+    src: "minio-config.j2"
+    dest: "/home/{{ user }}/minio/tools/deploy/native/minio-config.example"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+- name: copy contents of native dir to remote host
+  ansible.builtin.copy:
+    src: files/native/
+    dest: /home/{{ user }}/minio/tools/deploy/native/
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+    directory_mode:
+  tags: minio
+
+- name: Copy minio native start all script
+  ansible.builtin.copy:
+    src: ../../files/{{ deployment_name }}/minio-native-start-all.sh
+    dest: "/home/{{ user }}/minio/tools/deploy/native/minio-native-start-all.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+    force: yes
+  tags: minio
+
+#Minio Operator Setup
+- name: Copy Minio Operator script
+  template:
+    src: "minio-operator-install.sh.j2"
+    dest: "/home/{{ user }}/minio/tools/deploy/k8s/operator/minio-operator-install.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+- name: copy k8s uninstall
+  ansible.builtin.copy:
+    src: files/k8s/operator/uninstall-minio-operator.sh
+    dest: "/home/{{ user }}/minio/tools/deploy/k8s/operator/uninstall-minio-operator.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio

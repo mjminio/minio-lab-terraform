@@ -1,0 +1,50 @@
+- name: Retrieve helm binary archive.
+  unarchive:
+    src: https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz
+    dest: /tmp
+    creates: /usr/local/bin/helm
+    remote_src: yes
+  tags: lab-server, helm
+
+- name: Move helm binary into place.
+  command: cp /tmp/linux-amd64/helm /usr/local/bin/helm
+  args:
+    creates: /usr/local/bin/helm
+  tags: lab-server, helm
+
+- name: Fetch krew
+  get_url:
+    url: "https://github.com/kubernetes-sigs/krew/releases/download/v0.4.3/krew-linux_amd64.tar.gz"
+    dest: /tmp/krew.tar.gz
+  tags: lab-server
+
+- name: Make tempdir for krew
+  file:
+    path: /tmp/krew
+    state: directory
+  tags: lab-server
+
+- name: Unarchive krew
+  unarchive:
+    src: /tmp/krew.tar.gz
+    dest: /tmp/krew
+    remote_src: true
+  tags: lab-server
+
+- name: Set fact Amd64 fact on x86_64 platforms
+  set_fact:
+    linux_platform: amd64
+  when: ansible_architecture == "x86_64"
+  tags: lab-server
+
+- name: Copy krew plugin to /usr/local/bin
+  copy:
+    src: "/tmp/krew/krew-{{ ansible_system|lower }}_{{ linux_platform }}"
+    dest: /usr/local/bin/kubectl-krew
+    mode: 0755
+    remote_src: true
+  tags: lab-server
+
+- name: install Kubectl
+  shell: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+  tags: docker

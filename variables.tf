@@ -1,11 +1,15 @@
-# General variables
+# General User variables
+variable "deployment_name" {}
 variable "user" {}
+variable "environment_domain" {}
+variable "letsencrypt_email" {}
 variable "minio_password" {}
-variable "code_server_version" {}
 variable "code_server_password" {}
-variable "lab_repo_url" {
-  type        = list(string)
-}
+variable "haproxy_password" {}
+variable "shutdown_after_time" {}
+
+# Github
+variable "gh_pat" {}
 
 # Hetzner (hcloud) variables
 variable "hcloud_enabled" {}
@@ -31,3 +35,14 @@ variable "aws_region" {}
 variable "aws_instance_count" {}
 variable "aws_instance_image" {}
 variable "aws_instance_size" {}
+
+#Cloudflare variables
+variable "dns_service" {}
+variable "cloudflare_email" {}
+variable "cloudflare_api_token" {}
+variable "cloudflare_zone_id" {}
+
+variable "environment_systemd_directory" {}
+variable "docker_compose_version" {}
+variable "code_server_version" {}
+variable "lab_repo_url" {}

@@ -1,28 +1,12 @@
-#!/bin/bash
+## Below are the details about your environment. Please use the links and provided credentials to access.
+Servers:
+
+%{ for index, host in host_info ~}
+${host}
+%{ endfor ~}
 
 VSCode Server Links:
-HCloud Servers:
-%{ for index, ip in hcloud_minio_ips ~}
-https://${hcloud_minio_ips[index]}:8080
-%{ endfor ~}
-DO Droplets:
-%{ for index, ip in do_minio_ips ~}
-https://${do_minio_ips[index]}:8080
-%{ endfor ~}
 
+%{ for index, name in server_names ~}%{ if can(server_names) }https://code.${name}.${environment_domain}
+%{ endif }%{ endfor ~}
 VSCode Server Password: ${code_server_password}
-
-NOTE: These Minio links will only be accessible after you run your setup script for Minio. These will work with Docker or Native installs.
-
-HCloud Servers:
-%{ for index, ip in hcloud_minio_ips ~}
-http://${hcloud_minio_ips[index]}:9000
-%{ endfor ~}
-
-DO Droplets:
-%{ for index, ip in do_minio_ips ~}
-http://${do_minio_ips[index]}:9000
-%{ endfor ~}
-
-Minio Username: ${user}
-Minio Password: ${minio_password}

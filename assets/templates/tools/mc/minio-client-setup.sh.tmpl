@@ -1,0 +1,8 @@
+#!/bin/bash
+
+%{ for index, name in hcloud_name ~}%{ if can(hcloud_name) }mc alias set ${name} https://${hcloud_minio_ips[index]}:9000 ${user} ${minio_password} --api S3v4 --insecure
+%{ endif }%{ endfor ~}
+%{ for index, name in do_name ~}%{ if can(do_name) }mc alias set ${name} https://${do_minio_ips[index]}:9000 ${user} ${minio_password} --api S3v4 --insecure
+%{ endif }%{ endfor ~}
+%{ for index, name in aws_name ~}%{ if can(aws_name) }mc alias set ${name} https://${aws_minio_ips[index]}:9000 ${user} ${minio_password} --api S3v4 --insecure
+%{ endif }%{ endfor ~}

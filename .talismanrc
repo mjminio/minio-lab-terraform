@@ -1,0 +1,8 @@
+fileignoreconfig:
+- filename: ansible/roles/containers/certbot/files/ssl-dhparams.pem
+  checksum: c74466b15627c9b69b288cb81e2bc68f9a1cd1fd5e8f123967f0124867e86be6
+- filename: ansible/roles/minio/templates/distributed-docker-compose.yml.j2
+  checksum: 8571fa1e6683f5b8d63e42e8b56544fdb9d21265e268e85e3e47f760c78799ce
+- filename: writing-labs.md
+  checksum: 67871a0eacacc3a069a0b50f82aa026e0f0e5f1a1264a09b7b7e6aab3c2c3841
+version: ""

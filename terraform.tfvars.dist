@@ -1,10 +1,18 @@
 # General User variables
+deployment_name = "minio-lab"
 user = "minio"
+environment_domain = "<YOUR-DOMAIN>"
+letsencrypt_email = "<YOUR-EMAIL>"
 minio_password = "<SOME-COMPLEX-PASSWORD>"
 code_server_password = "<SOME-COMPLEX-PASSWORD>"
+haproxy_password = "<SOME-COMPLEX-PASSWORD>"
+shutdown_after_time = "8" #Set to number of hours until server auto shuts down. Can be .5 for half an hour, .25 for 15 mins, etc
+
+# Github
+gh_pat = "ghp_121212121212121212121212212"
 
 # Hetzner (hcloud) variables
-hcloud_enabled = "1" #Set to 0 to disable HCloud. Set to 1 to enable HCloud.
+hcloud_enabled = "true" #Set to "true" to enable HCloud. Set to "false" to disable HCloud.
 hcloud_token = "<YOUR-HCLOUD-TOKEN>"
 hcloud_server_count = 1
 hcloud_location = "ash" #Set your preferred region
@@ -12,7 +20,7 @@ hcloud_server_type = "cpx31"
 hcloud_os_type = "ubuntu-20.04"
 
 # DigitalOcean (DO) variables
-do_enabled = "0" #Set to 0 to disable DO. Set to 1 to enable DO.
+do_enabled = "false" #Set to "true" to enable DO. Set to "false" to disable DO.
 do_token = "<YOUR-DO-TOKEN>"
 do_droplet_count = 0
 do_region = "nyc3" #Set your preferred region
@@ -20,14 +28,23 @@ do_droplet_size = "s-4vcpu-8gb"
 do_os_type = "ubuntu-20-04-x64"
 
 # AWS variables
-aws_enabled = "0" #Set to 0 to disable AWS. Set to 1 to enable AWS.
+aws_enabled = "false" #Set to "true" to enable AWS. Set to "false" to disable AWS. 
 aws_access_key = "<YOUR-AWS-ACCESS-KEY>"
 aws_secret_key = "<YOUR-AWS-SECRET-KEY>"
-aws_region = "us-east-1" #Set your preferred region
 aws_instance_count = "0"
+aws_region = "us-east-1" #Set your preferred region
 aws_instance_image = "ami-0070c5311b7677678" #Set to the appropriate Ubuntu 20.04 AMI in your selected region. Find the AMI here: https://cloud-images.ubuntu.com/locator/ec2/
 aws_instance_size = "t3a.xlarge"
 
+# Cloudflare variables
+dns_service = "cloudflare"
+cloudflare_email = "<CLOUDFLARE-ACCOUNT-EMAIL>"
+cloudflare_api_token = "<CLOUDFLARE-API-TOKEN>"
+cloudflare_zone_id = "<CLOUDFLARE-DOMAIN-ZONE-ID>"
+
 # General Variables (generally not necessary to change these)
-code_server_version = "4.4.0"
-lab_repo_url = ["https://github.com/mjminio/lab-test.git","https://github.com/mjminio/test2.git"]
+environment_systemd_directory = "/etc/systemd/system"
+docker_compose_version = "1.29.2"
+code_server_version = "4.5.1"
+# Do not include https:// for the lab repo
+lab_repo_url = "github.com/miniohq/minio-training-labs.git"

@@ -1,0 +1,4 @@
+---
+roles:
+# Install oh-my-zsh role
+- src: geerlingguy.docker

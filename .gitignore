@@ -7,6 +7,11 @@
 *.tfvars
 TODO.md
 .terraform/
+*.wip
+ansible/files
+ansible/inventory
+/terraform.tfstate.d
+
 
 #Include
 !files/README.md

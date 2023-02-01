@@ -1,0 +1,69 @@
+---
+- name: Create /home/user/certs directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/certs
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  tags: self-signed-certs
+
+- name: Download mkcert
+  ansible.builtin.get_url:
+    url: https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-amd64
+    dest: /usr/local/bin/mkcert
+    mode: '0777'
+  tags: self-signed-certs
+
+- name: Generate self-signed cert
+  ansible.builtin.shell: |
+      . /etc/profile
+      mkcert -install
+      update-ca-certificates
+      mkcert -cert-file /home/{{ user }}/certs/public.crt -key-file /home/{{ user }}/certs/private.key {{ ansible_host }}
+      openssl verify -verbose -CAfile ~/.local/share/mkcert/rootCA.pem /home/{{ user }}/certs/public.crt
+      mkdir -p /home/{{ user }}/.minio/certs
+      cp /home/{{ user }}/certs/* /home/{{ user }}/.minio/certs/
+  tags: self-signed-certs
+
+- name: Change owner of /home/user/certs dir
+  shell: chown -R {{ user }}:{{ user }} /home/{{ user }}/certs
+  tags: self-signed-certs
+
+- name: Change owner of /home/user/minio/certs dir
+  shell: chown -R {{ user }}:{{ user }} /home/{{ user }}/.minio/certs
+  tags: self-signed-certs
+
+- name: Create /home/{{ user }}/.minio/certs/CAs directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/.minio/certs/CAs
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  tags: self-signed-certs
+
+- name: Copy CA files
+  ansible.builtin.copy:
+    remote_src: yes
+    src: ~/.local/share/mkcert/rootCA.pem
+    dest: "/home/{{ user }}/.minio/certs/CAs/{{ inventory_hostname }}.pem"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+    force: yes
+  tags: self-signed-certs
+
+- name: Copy CA files locally for distribution
+  ansible.builtin.fetch:
+    src: ~/.local/share/mkcert/rootCA.pem
+    dest: ./files/{{ deployment_name }}/certs/CAs/{{ inventory_hostname }}.pem
+    flat: yes
+  tags: self-signed-certs
+
+- name: copy contents of CAs dir to remote host
+  ansible.builtin.copy:
+    src: ./files/{{ deployment_name }}/certs/CAs/
+    dest: /home/{{ user }}/.minio/certs/CAs/
+    directory_mode:
+  tags: self-signed-certs

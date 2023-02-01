@@ -1,0 +1,11 @@
+---
+- name: Download k3s binary x64
+  get_url:
+    url: https://github.com/k3s-io/k3s/releases/download/v1.21.14+k3s1/k3s
+    checksum: sha256:https://github.com/k3s-io/k3s/releases/download/v1.21.14+k3s1/sha256sum-amd64.txt
+    dest: /usr/local/bin/k3s
+    owner: root
+    group: root
+    mode: 0755
+  when: ansible_facts.architecture == "x86_64"
+  tags: k3s

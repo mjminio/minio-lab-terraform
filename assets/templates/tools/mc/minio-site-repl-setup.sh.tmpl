@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mc admin replicate add %{ for index, name in server_names ~}%{ if can(server_names) }${name} %{ endif }%{ endfor ~}

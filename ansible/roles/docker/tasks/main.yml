@@ -1,0 +1,67 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 30
+
+- name: Install docker prereq apt packages
+  apt:
+    name:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+    - gnupg-agent
+    - python3-pip
+    state: present
+    update_cache: true
+  register: apt_action
+  retries: 100
+  until: apt_action is success or ('Failed to lock apt for exclusive operation' not in apt_action.msg and '/var/lib/dpkg/lock' not in apt_action.msg)
+
+- name: Set higher inotify.max_user_instances so we can run more containers
+  shell: sysctl -w fs.inotify.max_user_instances=8192
+  tags: docker
+
+- name: Add an apt signing key for Docker
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add apt repository for stable version
+  apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+- name: Install Docker
+  apt:
+    name:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    state: present
+    update_cache: yes
+  register: apt_action
+  retries: 100
+  until: apt_action is success or ('Failed to lock apt for exclusive operation' not in apt_action.msg and '/var/lib/dpkg/lock' not in apt_action.msg)
+
+- name: Install python Docker / Docker-compose module
+  pip:
+    name:
+        - docker
+        - docker-compose
+
+- name: Add ansible user to docker group
+  user:
+    name: "{{ user }}"
+    group: docker
+
+#- name: Download docker-compose {{ docker_compose_version }}
+#  get_url:
+#    url : https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64
+#    dest: /usr/local/bin/docker-compose
+#    mode: '+x'
+
+#- name: Check docker-compose exists
+#  stat: path=/usr/local/bin/docker-compose
+#  register: docker_compose
