@@ -17,7 +17,7 @@ data "template_file" "hcloud_init" {
 
 resource "hcloud_server" "minio_lab_server" {
   count       = var.hcloud_enabled ? var.hcloud_server_count : 0
-  name        = "${var.deployment_name}-hcloud-${count.index + 1}"
+  name        = "${var.deployment_name}-hc-${count.index + 1}"
   image       = var.hcloud_os_type
   server_type = var.hcloud_server_type
   location    = var.hcloud_location

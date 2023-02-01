@@ -114,59 +114,6 @@
   retries: 100
   until: apt_action is success or ('Failed to lock apt for exclusive operation' not in apt_action.msg and '/var/lib/dpkg/lock' not in apt_action.msg)
 
-- name: Retrieve helm binary archive.
-  unarchive:
-    src: https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz
-    dest: /tmp
-    creates: /usr/local/bin/helm
-    remote_src: yes
-  tags: lab-server, helm
-
-- name: Move helm binary into place.
-  command: cp /tmp/linux-amd64/helm /usr/local/bin/helm
-  args:
-    creates: /usr/local/bin/helm
-  tags: lab-server, helm
-
-- name: Fetch krew
-  get_url:
-    url: "https://github.com/kubernetes-sigs/krew/releases/download/v0.4.3/krew-linux_amd64.tar.gz"
-    dest: /tmp/krew.tar.gz
-  tags: lab-server
-
-- name: Make tempdir for krew
-  file:
-    path: /tmp/krew
-    state: directory
-  tags: lab-server
-
-- name: Unarchive krew
-  unarchive:
-    src: /tmp/krew.tar.gz
-    dest: /tmp/krew
-    remote_src: true
-  tags: lab-server
-
-- name: Set fact Amd64 fact on x86_64 platforms
-  set_fact:
-    linux_platform: amd64
-  when: ansible_architecture == "x86_64"
-  tags: lab-server
-
-- name: Copy krew plugin to /usr/local/bin
-  copy:
-    src: "/tmp/krew/krew-{{ ansible_system|lower }}_{{ linux_platform }}"
-    dest: /usr/local/bin/kubectl-krew
-    mode: 0755
-    remote_src: true
-  tags: lab-server
-
-- name: Run Krew Update
-  shell: /usr/local/bin/kubectl krew update
-  args:
-    creates: /root/.krew/index/plugins/krew_plugins.yaml
-  tags: lab-server
-
 - name: Enable EC2 spot hibernation agent
   shell: /usr/bin/enable-ec2-spot-hibernation
   when: "'aws' in ansible_kernel"
@@ -219,3 +166,9 @@
     mode: 0600
     force: yes
   tags: lab-server
+
+- name: Install python Docker / Docker-compose module
+  pip:
+    name:
+        - docker
+        - docker-compose

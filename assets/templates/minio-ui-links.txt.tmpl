@@ -7,15 +7,6 @@ ${host}
 
 VSCode Server Links:
 
-%{ for index, ip in server_ips ~}%{ if can(server_ips) }https://${ip}:8080
+%{ for index, name in server_names ~}%{ if can(server_names) }https://code.${name}.${environment_domain}
 %{ endif }%{ endfor ~}
-
 VSCode Server Password: ${code_server_password}
-
-NOTE: These Minio links will only be accessible after you run your setup script for Minio. These will work with Docker or Native installs.
-
-%{ for index, ip in server_ips ~}%{ if can(server_ips) }https://${ip}:9000
-%{ endif }%{ endfor ~}
-
-Minio Username: ${user}
-Minio Password: ${minio_password}

@@ -39,7 +39,7 @@
   replace:
     path: "{{ item.path }}"
     regexp: 'LABSERVERNAME'
-    replace: '{{ ansible_host }}'
+    replace: '{{ inventory_hostname }}'
   with_items: "{{ repos.files }}"
   tags: lab-server, lab-repo, lab-repo-update
 

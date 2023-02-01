@@ -29,11 +29,33 @@
     group: "{{ user }}"
     mode: 0775
   loop:
+    - /home/{{ user }}/minio/tools/deploy/core
     - /home/{{ user }}/minio/tools/deploy/docker/docker-compose/single
     - /home/{{ user }}/minio/tools/deploy/docker/docker-compose/distributed
     - /home/{{ user }}/minio/tools/deploy/native/
     - /home/{{ user }}/minio/tools/deploy/mc/
     - /home/{{ user }}/minio/tools/deploy/k8s/operator/
+  tags: minio
+
+## Minio Core 3 cluster Deploy
+
+- name: Copy mc-lab-3-cluster-setup.sh
+  template:
+    src: "core/mc-lab-3-cluster-setup.sh.j2"
+    dest: "/home/{{ user }}/minio/tools/deploy/core/mc-lab-3-cluster-setup.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+- name: Copy mc-lab-3-cluster-delete.sh
+  ansible.builtin.copy:
+    src: files/core/mc-lab-3-cluster-delete.sh
+    dest: "/home/{{ user }}/minio/tools/deploy/core/mc-lab-3-cluster-delete.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+    force: yes
   tags: minio
 
 ## MC Client Setup

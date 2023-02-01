@@ -9,7 +9,7 @@
   gather_facts: yes
   become: yes
   roles:
-    - role: docker
+    - role: geerlingguy.docker
     - role: lab_server
     - role: containers/certbot
     - role: haproxy

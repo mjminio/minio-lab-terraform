@@ -88,9 +88,9 @@
   ignore_errors: yes
 
 - name: Copy haproxy.cfg file
-  ansible.builtin.copy:
-    src: files/{{ deployment_name }}/haproxy.cfg
-    dest: /etc/haproxy/
+  template:
+    src: "haproxy.cfg.j2"
+    dest: /etc/haproxy/haproxy.cfg
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: '0777'

@@ -11,7 +11,7 @@ resource "cloudflare_record" "cloudflare_hcloud_dns" {
 resource "cloudflare_record" "cloudflare_code_hcloud_dns" {
   count  = "${var.dns_service == "cloudflare" && var.hcloud_server_count > 0 ? var.hcloud_server_count:0}"
   zone_id = var.cloudflare_zone_id
-  name   = "code.${element(hcloud_server.minio_lab_server.*.name, count.index)}"
+  name   = "*.${element(hcloud_server.minio_lab_server.*.name, count.index)}"
   value  = "${element(hcloud_server.minio_lab_server.*.ipv4_address, count.index)}"
   type   = "A"
   ttl = 60

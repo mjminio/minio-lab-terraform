@@ -1,3 +1,9 @@
+locals {
+  names = concat(hcloud_server.minio_lab_server[*].name, digitalocean_droplet.minio_lab_server[*].name, aws_instance.minio_lab_server[*].tags.Name)
+  ips = concat(hcloud_server.minio_lab_server[*].ipv4_address, digitalocean_droplet.minio_lab_server[*].ipv4_address, aws_instance.minio_lab_server[*].public_ip)
+}
+
+## Ansible Outputs
 resource "local_file" "ansible_inventory" {
   content  = templatefile("./assets/templates/ansible-inventory.tmpl", {
       hcloud_minio_ips = hcloud_server.minio_lab_server[*].ipv4_address,
@@ -39,6 +45,8 @@ resource "local_file" "ansible_all" {
       environment_domain = var.environment_domain
       dns_service = var.dns_service
       letsencrypt_email = var.letsencrypt_email
+      gh_pat = var.gh_pat
+      haproxy_password = var.haproxy_password
       }
     )
   filename = "./ansible/inventory/${var.deployment_name}/group_vars/all.yml"
@@ -53,18 +61,41 @@ resource "local_file" "cloudflare_ini" {
   filename = "./ansible/files/${var.deployment_name}/cloudflare.ini"
 }
 
-resource "local_file" "haproxy_config" {
-  content  = templatefile("./assets/templates/haproxy.cfg.tmpl", {
-      server_name = hcloud_server.minio_lab_server[*].name,
-      lab_server_ips = hcloud_server.minio_lab_server[*].ipv4_address,
-      deployment_name = var.deployment_name,
-      environment_domain = var.environment_domain
+#UI Links
+
+resource "local_file" "minio_ui" {
+  content  = templatefile("./assets/templates/minio-ui-links.txt.tmpl", {
+      server_names = local.names
+      server_ips = local.ips
+      user = var.user
+      minio_password = var.minio_password,
+      code_server_password = var.code_server_password,
+      host_info = "${formatlist( "%s: %s", local.names, local.ips)}",
+      environment_domain = var.environment_domain,
+      deployment_name = var.deployment_name
       }
     )
-  filename = "./ansible/files/${var.deployment_name}/haproxy.cfg"
-  depends_on = [hcloud_server.minio_lab_server]
+  filename = "ansible/files/${var.deployment_name}/minio-ui-links.txt"
 }
 
+resource "local_file" "minio_ui_sh" {
+  content  = templatefile("./assets/templates/minio-ui-links.sh.tmpl", {
+      server_names = local.names
+      server_ips = local.ips
+      user = var.user
+      minio_password = var.minio_password,
+      code_server_password = var.code_server_password,
+      host_info = "${formatlist( "%s: %s", local.names, local.ips)}"
+      green = "\\e[32m"
+      end = "\\e[0m"
+      environment_domain = var.environment_domain,
+      deployment_name = var.deployment_name
+      }
+    )
+  filename = "ansible/files/${var.deployment_name}/minio-ui-links.sh"
+}
+
+#Minio Outputs - Need to Move these to Ansible
 resource "local_file" "mc_setup" {
   content  = templatefile("./assets/templates/tools/mc/minio-client-setup.sh.tmpl", {
       minio_password = var.minio_password,
@@ -79,11 +110,6 @@ resource "local_file" "mc_setup" {
     )
   filename = "ansible/files/${var.deployment_name}/minio-client-setup.sh"
   depends_on = [hcloud_server.minio_lab_server]
-}
-
-locals {
-  names = concat(hcloud_server.minio_lab_server[*].name, digitalocean_droplet.minio_lab_server[*].name, aws_instance.minio_lab_server[*].tags.Name)
-  ips = concat(hcloud_server.minio_lab_server[*].ipv4_address, digitalocean_droplet.minio_lab_server[*].ipv4_address, aws_instance.minio_lab_server[*].public_ip)
 }
 
 resource "local_file" "mc_repl_setup" {
@@ -103,34 +129,6 @@ resource "local_file" "minio_native_start_all" {
     )
   filename = "ansible/files/${var.deployment_name}/minio-native-start-all.sh"
   depends_on = [hcloud_server.minio_lab_server]
-}
-
-resource "local_file" "minio_ui" {
-  content  = templatefile("./assets/templates/minio-ui-links.txt.tmpl", {
-      server_names = local.names
-      server_ips = local.ips
-      user = var.user
-      minio_password = var.minio_password,
-      code_server_password = var.code_server_password,
-      host_info = "${formatlist( "%s: %s", local.names, local.ips)}"
-      }
-    )
-  filename = "ansible/files/${var.deployment_name}/minio-ui-links.txt"
-}
-
-resource "local_file" "minio_ui_sh" {
-  content  = templatefile("./assets/templates/minio-ui-links.sh.tmpl", {
-      server_names = local.names
-      server_ips = local.ips
-      user = var.user
-      minio_password = var.minio_password,
-      code_server_password = var.code_server_password,
-      host_info = "${formatlist( "%s: %s", local.names, local.ips)}"
-      green = "\\e[32m"
-      end = "\\e[0m"
-      }
-    )
-  filename = "ansible/files/${var.deployment_name}/minio-ui-links.sh"
 }
 
 # ## Server Setup Scripts

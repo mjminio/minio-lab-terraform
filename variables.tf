@@ -5,7 +5,11 @@ variable "environment_domain" {}
 variable "letsencrypt_email" {}
 variable "minio_password" {}
 variable "code_server_password" {}
+variable "haproxy_password" {}
 variable "shutdown_after_time" {}
+
+# Github
+variable "gh_pat" {}
 
 # Hetzner (hcloud) variables
 variable "hcloud_enabled" {}

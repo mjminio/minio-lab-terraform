@@ -1,3 +1,4 @@
 ---
 - include: setup.yml
 - include: lab-repo.yml
+- include: k8s.yml

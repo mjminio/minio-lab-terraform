@@ -8,15 +8,9 @@ E="${end}"
 echo -----------------------------------------------
 echo -e $${G}Install is complete. Please use the below information to access your environment.$${E}
 echo -e $${G}VSCode UIs:$${E}
-echo -e %{ for index, ip in server_ips ~}%{ if can(server_ips) }https://${ip}:8080 / %{ endif }%{ endfor ~}
+echo -e %{ for index, name in server_names ~}%{ if can(server_names) }https://code.${name}.${environment_domain} / %{ endif }%{ endfor ~}
 
 echo -e $${G}VSCode Password$${E}: ${code_server_password}
 
-echo -e $${G}IMPORTANT NOTE: These Minio UI links will only be accessible after you run your setup script via VSCode for Minio.$${E}
-echo -e $${G}These will work with Docker or Native installs.$${E}
-echo -e $${G}Minio Links:$${E}
-echo -e %{ for index, ip in server_ips ~}%{ if can(server_ips) }https://${ip}:9000 / %{ endif }%{ endfor ~}
-
-echo -e $${G}Minio Username:$${E} ${user}
-echo -e $${G}Minio Password:$${E} ${minio_password}
+echo -e $${G}The complete list of lab environments can be found at ansible/files/${deployment_name}/minio-ui-links.txt$${E}
 echo -----------------------------------------------
