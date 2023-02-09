@@ -46,6 +46,8 @@ frontend https_in
         use_backend minio2_api_{{ inventory_hostname }} if { hdr(host) minio2-api.{{ inventory_hostname }} }
         use_backend minio3_{{ inventory_hostname }} if { hdr(host) minio3.{{ inventory_hostname }} }
         use_backend minio3_api_{{ inventory_hostname }} if { hdr(host) minio3-api.{{ inventory_hostname }} }
+        use_backend minio4_{{ inventory_hostname }} if { hdr(host) minio4.{{ inventory_hostname }} }
+        use_backend minio4_api_{{ inventory_hostname }} if { hdr(host) minio4-api.{{ inventory_hostname }} }
 
 backend code_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:11443 check ssl verify none
@@ -67,4 +69,10 @@ backend minio3_api_{{ inventory_hostname }}
 
 backend minio3_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:9055 check
+
+backend minio4_api_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:9056 check
+
+backend minio4_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:9057 check
 

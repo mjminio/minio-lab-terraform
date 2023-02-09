@@ -131,6 +131,40 @@
     shell: /bin/zsh
   tags: lab-server
 
+- name: Check if dotfiles have already been loaded
+  stat:
+    path: /home/{{ user }}/dotfiles
+  register: dotfiles
+  tags: lab-server, dotfiles
+
+- name: Create ab/misc/ab-dotfiles directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/dotfiles
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: '0755'
+  when: dotfiles.stat.exists == false
+  tags: lab-server, ab-dotfiles
+
+- name: Clone dotfiles repo
+  ansible.builtin.git:
+    repo: https://github.com/mjtechguy/dotfiles.git
+    dest: /home/{{ user }}/dotfiles
+  when: dotfiles.stat.exists == false
+  tags: lab-server, ab-dotfiles
+
+- name: Change owner of /home/user/dotfiles folder
+  shell: chown -R {{ user }}:{{ user }} /home/{{ user }}/dotfiles
+  tags: lab-server, ab-dotfiles
+
+- name: Run dotfiles install
+  become: true
+  become_user: "{{ user }}"
+  shell: cd /home/{{ user }}/dotfiles && sudo chmod +x install.sh && ./install.sh
+  when: dotfiles.stat.exists == false
+  tags: lab-server, ab-dotfiles
+
 - name: Create home/user/labs directory
   ansible.builtin.file:
     path: /home/{{ user }}/minio/labs

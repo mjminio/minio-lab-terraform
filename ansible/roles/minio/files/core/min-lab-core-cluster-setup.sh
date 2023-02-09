@@ -26,3 +26,12 @@ docker run -itd \
    -e "MINIO_ROOT_USER=minioadmin" \
    -e "MINIO_ROOT_PASSWORD=minioadmin" \
    quay.io/minio/minio server /data --console-address ":9090"
+
+   docker run -itd \
+   -p 9056:9000 \
+   -p 9057:9090 \
+   --name minio4 \
+   -v /mnt/data/minio4:/data \
+   -e "MINIO_ROOT_USER=minioadmin" \
+   -e "MINIO_ROOT_PASSWORD=minioadmin" \
+   quay.io/minio/minio server /data --console-address ":9090"

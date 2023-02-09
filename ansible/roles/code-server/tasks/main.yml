@@ -38,6 +38,7 @@
     src: https://github.com/cdr/code-server/releases/download/v{{ code_server_version }}/code-server-{{ code_server_version }}-linux-amd64.tar.gz
     dest: /tmp
     remote_src: yes
+  register: code_server_dl
   tags: code-server, code-server-download
 
 - name: Get stats of the FS object
@@ -49,12 +50,12 @@
 - name: Move code-server
   ansible.builtin.command: mv /tmp/code-server-{{ code_server_version }}-linux-amd64 /usr/lib/code-server
   tags: code-server, code-server-move
-  when: code.stat.exists == False
+  #when: code.stat.exists == False
 
 - name: Link code-server
   ansible.builtin.command: ln -sf /usr/lib/code-server/code-server-{{ code_server_version }}-linux-amd64/bin/code-server /usr/local/bin/code-server
   tags: code-server
-  when: code.stat.exists == False
+  #when: code.stat.exists == False
 
 - name: modify code-server
   ansible.builtin.command: chmod a+x /usr/lib/code-server
@@ -127,5 +128,5 @@
   ansible.builtin.service:
     name: code-server
     state: restarted
-  when: code_workspace.changed and code_settings.changed and code_lab.changed
+  when: code_workspace.changed or code_settings.changed or code_lab.changed
   tags: code-server, codelab-ext

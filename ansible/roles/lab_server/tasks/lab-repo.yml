@@ -1,9 +1,16 @@
 ---
+- name: move .git dir
+  ansible.builtin.copy:
+    src: /home/{{ user }}/minio/labs/.git.old
+    dest: /home/{{ user }}/minio/labs/.git
+  ignore_errors: yes
+
 - name: Clone Lab Repo
   ansible.builtin.git:
     repo: "{{ lab_repo_url }}"
     dest: /home/{{ user }}/minio/labs
     depth: 1
+    force: true
   tags: lab-server, lab-repo
   ignore_errors: yes
 
@@ -13,15 +20,15 @@
     chdir: /home/{{ user }}/minio/labs
   tags: lab-repo-update
 
+- name: move .git dir
+  ansible.builtin.copy:
+    src: /home/{{ user }}/minio/labs/.git
+    dest: /home/{{ user }}/minio/labs/.git.old
+  ignore_errors: yes
+
 - name: Change owner of /home/user/minio/labs folder
   shell: chown -R {{ user }}:{{ user }} /home/{{ user }}/minio/labs
   tags: lab-server, lab-repo, lab-repo-update
-
-# - name: Remove .git folder from lab repo
-#   ansible.builtin.file:
-#     path: /ab/labs/.git
-#     state: absent
-#   tags: lab-server, lab-repo, lab-repo-update
 
 - name: Find all of the README files inside this directory
   find:
@@ -50,3 +57,13 @@
     replace: '{{ user }}'
   with_items: "{{ repos.files }}"
   tags: lab-server, lab-repo, lab-repo-update
+
+- name: Copy update script
+  ansible.builtin.copy:
+    src: files/update-repo.sh
+    dest: "/home/{{ user }}/minio/update-repo.sh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0700
+    force: yes
+  tags: never, admin-lab-server-update

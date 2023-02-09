@@ -7,6 +7,15 @@
     mode: '0777'
   tags: minio
 
+- name: Create a symbolic link to /mnt/data
+  ansible.builtin.file:
+    src: /mnt/data
+    dest: /home/{{ user }}/minio/data
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    state: link
+  tags: minio
+
 - name: Download minio server native binary
   ansible.builtin.get_url:
     url: https://dl.min.io/server/minio/release/linux-amd64/minio
@@ -37,21 +46,22 @@
     - /home/{{ user }}/minio/tools/deploy/k8s/operator/
   tags: minio
 
-## Minio Core 3 cluster Deploy
+## Minio Core cluster Deploy
 
-- name: Copy mc-lab-3-cluster-setup.sh
-  template:
-    src: "core/mc-lab-3-cluster-setup.sh.j2"
-    dest: "/home/{{ user }}/minio/tools/deploy/core/mc-lab-3-cluster-setup.sh"
+- name: Copy min-lab-core-cluster-setup.sh
+  ansible.builtin.copy:
+    src: files/core/min-lab-core-cluster-setup.sh
+    dest: "/home/{{ user }}/minio/tools/deploy/core/min-lab-core-cluster-setup.sh"
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0755
+    force: yes
   tags: minio
 
-- name: Copy mc-lab-3-cluster-delete.sh
+- name: Copy min-lab-core-cluster-delete.sh
   ansible.builtin.copy:
-    src: files/core/mc-lab-3-cluster-delete.sh
-    dest: "/home/{{ user }}/minio/tools/deploy/core/mc-lab-3-cluster-delete.sh"
+    src: files/core/min-lab-core-cluster-delete.sh
+    dest: "/home/{{ user }}/minio/tools/deploy/core/min-lab-core-cluster-delete.sh"
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0755
