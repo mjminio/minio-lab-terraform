@@ -50,12 +50,12 @@
 - name: Move code-server
   ansible.builtin.command: mv /tmp/code-server-{{ code_server_version }}-linux-amd64 /usr/lib/code-server
   tags: code-server, code-server-move
-  #when: code.stat.exists == False
+  when: code.stat.exists == False
 
 - name: Link code-server
   ansible.builtin.command: ln -sf /usr/lib/code-server/code-server-{{ code_server_version }}-linux-amd64/bin/code-server /usr/local/bin/code-server
   tags: code-server
-  #when: code.stat.exists == False
+  when: code.stat.exists == False
 
 - name: modify code-server
   ansible.builtin.command: chmod a+x /usr/lib/code-server
@@ -107,22 +107,42 @@
   register: code_settings
   tags: code-server
 
-- name: Check if codelab exists
-  remote_user: "{{ user }}"
-  become: no
-  stat:
-      path: /home/{{ user }}/code-server/extensions/codelab
-  register: codelab_dir
-  tags: code-server, codelab-ext
+# - name: Check if codelab exists
+#   remote_user: "{{ user }}"
+#   become: no
+#   stat:
+#       path: /home/{{ user }}/code-server/extensions/codelab
+#   register: codelab_dir
+#   tags: code-server, codelab-ext
 
-- name: Extract codelab.zip to /home/user/code-server/extensions
-  ansible.builtin.unarchive:
-    src: files/codelab.zip
-    dest: /home/{{ user }}/code-server/extensions
-    creates:
+# - name: Extract codelab.zip to /home/user/code-server/extensions
+#   ansible.builtin.unarchive:
+#     src: files/codelab.zip
+#     dest: /home/{{ user }}/code-server/extensions
+#     creates:
+#   register: code_lab
+#   when: not codelab_dir.stat.exists
+#   tags: code-server, codelab-ext
+
+- name: Copy codelab vsix
+  ansible.builtin.copy:
+    src: files/codelab-0.0.2.vsix
+    dest: "/home/{{ user }}/code-server/extensions/codelab-0.0.2.vsix"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+    force: yes
   register: code_lab
-  when: not codelab_dir.stat.exists
-  tags: code-server, codelab-ext
+  tags: code-server
+
+- name: install codelab vsix
+  remote_user: "{{ user }}"
+  become: false
+  shell: 
+    cmd: code-server --install-extension /home/{{ user }}/code-server/extensions/codelab-0.0.2.vsix --user-data-dir /home/{{ user }}/code-server
+    chdir: /home/{{ user }}/minio/
+  register: code_lab_install
+  tags: code-server
 
 - name: Restart Code-server
   ansible.builtin.service:
