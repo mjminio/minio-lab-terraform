@@ -11,7 +11,7 @@ TODO.md
 ansible/files
 ansible/inventory
 /terraform.tfstate.d
-ansible.cfg
+/ansible/ansible.cfg
 
 
 #Include
