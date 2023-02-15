@@ -15,6 +15,7 @@ This is in **ALPHA** and major changes will be made before it is ready for gener
 
 ## Requirements
 - Terraform installed on your local machine (https://learn.hashicorp.com/tutorials/terraform/install-cli)
+- Ansible installed on your local machine
 - A cloud account and keys for:
   - AWS
   - DigitalOcean
@@ -61,6 +62,13 @@ Simply change the `deployment` name in the `terraform.tfvars` file to the enviro
 - Change `deployment_name` in `terraform.tfvars` back to `minio-lab1` and then run `make destroy` and it will only tear down the resources related to `minio-lab1` leaving all `minio-lab2` infrastructure in place.
 
 - Lastly, to clean up `minio-lab2`, change `deployment_name` in `terraform.tfvars` to `minio-lab2` and then run `make destroy` and the `minio-lab2` content will be removed as well.
+
+## Adding the Repo Update script
+
+1. In you project, `cd ansible`.
+2. Run the following to deploy the script `ansible-playbook main.yml -i inventory/YOURDEPLOYMENTNAME/YOURDEPLOYMENTNAME-inventory -t admin-lab-server-update`.
+3. Login to code-server in your browser and verify that the `update-repo.sh` script exists in the `~/minio` directory.
+4. When you want to pull changes from the `main` branch of `minio-training-labs`, run that script.
 
 ## Teardown Instructions
 - In the `minio-lab-terraform` directory, with the desired `deployment_name` set in `terraform.tfvars`, run `make destroy`. This will remove all deployed components and no additional billing should be done for that particular deployment once this command is run and the components are removed.
