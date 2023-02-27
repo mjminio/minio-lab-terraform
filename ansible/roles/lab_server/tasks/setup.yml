@@ -95,6 +95,7 @@
     - man
     - net-tools
     - openssl
+    - rename
     - software-properties-common
     - ssh
     - sudo
@@ -184,12 +185,12 @@
     force: yes
   tags: lab-server
 
-- name: Create cron for shutdown command
-  ansible.builtin.cron:
-    name: "shutdown host after x hours"
-    minute: "*/5"
-    job: "/home/{{ user }}/shutdown.sh"
-  tags: lab-server
+# - name: Create cron for shutdown command
+#   ansible.builtin.cron:
+#     name: "shutdown host after x hours"
+#     minute: "*/5"
+#     job: "/home/{{ user }}/shutdown.sh"
+#   tags: lab-server
 
 - name: Copy private key
   ansible.builtin.copy:

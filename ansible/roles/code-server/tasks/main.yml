@@ -124,13 +124,23 @@
 #   when: not codelab_dir.stat.exists
 #   tags: code-server, codelab-ext
 
-- name: Copy codelab vsix
-  ansible.builtin.copy:
-    src: files/codelab-0.0.2.vsix
+# - name: Copy codelab vsix
+#   ansible.builtin.copy:
+#     src: files/codelab-0.0.2.vsix
+#     dest: "/home/{{ user }}/code-server/extensions/codelab-0.0.2.vsix"
+#     owner: "{{ user }}"
+#     group: "{{ user }}"
+#     mode: 0755
+#     force: yes
+#   register: code_lab
+#   tags: code-server
+
+- name: Download the codelab vsix from github
+  get_url:
+    url: "https://github.com/mjminio/minio-lab-terraform/releases/download/codelab-0.0.2/codelab-0.0.2.vsix"
     dest: "/home/{{ user }}/code-server/extensions/codelab-0.0.2.vsix"
     owner: "{{ user }}"
     group: "{{ user }}"
-    mode: 0755
     force: yes
   register: code_lab
   tags: code-server
@@ -150,3 +160,9 @@
     state: restarted
   when: code_workspace.changed or code_settings.changed or code_lab.changed
   tags: code-server, codelab-ext
+
+- name: Restart Code-server
+  ansible.builtin.service:
+    name: code-server
+    state: restarted
+  tags: code-server, codelab-ext, code-server-restart
