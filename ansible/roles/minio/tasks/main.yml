@@ -48,14 +48,23 @@
 
 ## Minio Core cluster Deploy
 
+# - name: Copy min-lab-core-cluster-setup.sh
+#   ansible.builtin.copy:
+#     src: files/core/min-lab-core-cluster-setup.sh
+#     dest: "/home/{{ user }}/minio/tools/deploy/core/min-lab-core-cluster-setup.sh"
+#     owner: "{{ user }}"
+#     group: "{{ user }}"
+#     mode: 0755
+#     force: yes
+#   tags: minio
+
 - name: Copy min-lab-core-cluster-setup.sh
-  ansible.builtin.copy:
-    src: files/core/min-lab-core-cluster-setup.sh
+  template:
+    src: "core/min-lab-core-cluster-setup.sh.j2"
     dest: "/home/{{ user }}/minio/tools/deploy/core/min-lab-core-cluster-setup.sh"
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0755
-    force: yes
   tags: minio
 
 - name: Copy min-lab-core-cluster-delete.sh
