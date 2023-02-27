@@ -40,14 +40,15 @@ frontend https_in
         http-request redirect scheme https unless { ssl_fc }
         
         use_backend code_{{ inventory_hostname }} if { hdr(host) code.{{ inventory_hostname }} }
-        use_backend minio1_{{ inventory_hostname }} if { hdr(host) minio1.{{ inventory_hostname }} }
-        use_backend minio1_api_{{ inventory_hostname }} if { hdr(host) minio1-api.{{ inventory_hostname }} }
-        use_backend minio2_{{ inventory_hostname }} if { hdr(host) minio2.{{ inventory_hostname }} }
-        use_backend minio2_api_{{ inventory_hostname }} if { hdr(host) minio2-api.{{ inventory_hostname }} }
-        use_backend minio3_{{ inventory_hostname }} if { hdr(host) minio3.{{ inventory_hostname }} }
-        use_backend minio3_api_{{ inventory_hostname }} if { hdr(host) minio3-api.{{ inventory_hostname }} }
-        use_backend minio4_{{ inventory_hostname }} if { hdr(host) minio4.{{ inventory_hostname }} }
-        use_backend minio4_api_{{ inventory_hostname }} if { hdr(host) minio4-api.{{ inventory_hostname }} }
+        use_backend minio1_{{ inventory_hostname }} if { hdr_sub(host) minio1.{{ inventory_hostname }} }
+        use_backend minio1_api_{{ inventory_hostname }} if { hdr_sub(host) minio1-api.{{ inventory_hostname }} }
+        use_backend minio2_{{ inventory_hostname }} if { hdr_sub(host) minio2.{{ inventory_hostname }} }
+        use_backend minio2_api_{{ inventory_hostname }} if { hdr_sub(host) minio2-api.{{ inventory_hostname }} }
+        use_backend minio3_{{ inventory_hostname }} if { hdr_sub(host) minio3.{{ inventory_hostname }} }
+        use_backend minio3_api_{{ inventory_hostname }} if { hdr_sub(host) minio3-api.{{ inventory_hostname }} }
+        use_backend minio4_{{ inventory_hostname }} if { hdr_sub(host) minio4.{{ inventory_hostname }} }
+        use_backend minio4_api_{{ inventory_hostname }} if { hdr_sub(host) minio4-api.{{ inventory_hostname }} }
+        use_backend prom_{{ inventory_hostname }} if { hdr_sub(host) prom.{{ inventory_hostname }} }
 
 backend code_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:11443 check ssl verify none
@@ -75,4 +76,7 @@ backend minio4_api_{{ inventory_hostname }}
 
 backend minio4_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:9057 check
+
+backend prom_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:9090 check
 

@@ -12,3 +12,4 @@ docker rm -f minio3
 sudo rm -rf /mnt/data/minio3
 docker rm -f minio4
 sudo rm -rf /mnt/data/minio4
+docker rm -f prom
