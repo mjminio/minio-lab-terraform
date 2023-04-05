@@ -46,3 +46,6 @@ variable "environment_systemd_directory" {}
 variable "docker_compose_version" {}
 variable "code_server_version" {}
 variable "lab_repo_url" {}
+variable "codelab_version" {
+    default = "0.0.4"
+}

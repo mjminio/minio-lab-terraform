@@ -47,6 +47,7 @@ resource "local_file" "ansible_all" {
       letsencrypt_email = var.letsencrypt_email
       gh_pat = var.gh_pat
       haproxy_password = var.haproxy_password
+      codelab_version = var.codelab_version
       }
     )
   filename = "./ansible/inventory/${var.deployment_name}/group_vars/all.yml"
