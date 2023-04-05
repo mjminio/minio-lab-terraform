@@ -68,14 +68,32 @@
   tags: minio
 
 - name: Copy min-lab-core-cluster-delete.sh
-  ansible.builtin.copy:
-    src: files/core/min-lab-core-cluster-delete.sh
+  template:
+    src: "core/min-lab-core-cluster-delete.sh.j2"
     dest: "/home/{{ user }}/minio/tools/deploy/core/min-lab-core-cluster-delete.sh"
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0755
-    force: yes
   tags: minio
+
+- name: Copy ldap-docker-compose.yml
+  template:
+    src: "core/ldap-docker-compose.yml.j2"
+    dest: "/home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
+# - name: Copy min-lab-core-cluster-delete.sh
+#   ansible.builtin.copy:
+#     src: files/core/min-lab-core-cluster-delete.sh
+#     dest: "/home/{{ user }}/minio/tools/deploy/core/min-lab-core-cluster-delete.sh"
+#     owner: "{{ user }}"
+#     group: "{{ user }}"
+#     mode: 0755
+#     force: yes
+#   tags: minio
 
 ## MC Client Setup
 - name: Copy minio mc client setup script

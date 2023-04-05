@@ -43,3 +43,5 @@ docker run -itd \
   --name prom \
   -v /home/minio/minio/labs/minio-for-admins/minio-monitoring/config:/etc/prometheus \
   quay.io/prometheus/prometheus
+
+docker compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml up -d
