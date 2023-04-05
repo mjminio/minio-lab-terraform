@@ -137,8 +137,8 @@
 
 - name: Download the codelab vsix from github
   get_url:
-    url: "https://github.com/mjminio/minio-lab-terraform/releases/download/codelab-0.0.2/codelab-0.0.2.vsix"
-    dest: "/home/{{ user }}/code-server/extensions/codelab-0.0.2.vsix"
+    url: "https://github.com/mjminio/minio-lab-terraform/releases/download/codelab-{{ codelab_version }}/codelab-{{ codelab_version }}.vsix"
+    dest: "/home/{{ user }}/code-server/extensions/codelab-{{ codelab_version }}.vsix"
     owner: "{{ user }}"
     group: "{{ user }}"
     force: yes
@@ -149,7 +149,7 @@
   remote_user: "{{ user }}"
   become: false
   shell: 
-    cmd: code-server --install-extension /home/{{ user }}/code-server/extensions/codelab-0.0.2.vsix --user-data-dir /home/{{ user }}/code-server
+    cmd: code-server --install-extension /home/{{ user }}/code-server/extensions/codelab-{{ codelab_version }}.vsix --user-data-dir /home/{{ user }}/code-server
     chdir: /home/{{ user }}/minio/
   register: code_lab_install
   tags: code-server
