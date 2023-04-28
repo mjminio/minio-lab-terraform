@@ -64,9 +64,10 @@
   register: certbot
   tags: certbot
 
-- name: Create and start certbot container
-  community.docker.docker_compose:
-    project_src: /home/{{ user }}/certbot
+- name: Create and start certbot container (shell)
+  shell: docker compose up -d
+  args:
+    chdir: /home/{{ user }}/certbot
   register: output
   tags: certbot
   when: certbot.stat.exists == false
@@ -131,23 +132,13 @@
     mode: '0755'
   tags: certbot
 
-- name: Remove certbot container
-  community.docker.docker_compose:
-    project_src: /home/{{ user }}/certbot
-    build: no
-    state: present
-    stopped: yes
-  tags: certbot, certbot-compose-down
-  when: certbot.stat.exists == False
-
-- name: Remove certbot container
-  community.docker.docker_compose:
-    project_src: /home/{{ user }}/certbot
-    build: no
-    state: absent
-  register: output
-  tags: certbot, certbot-compose-down
-  when: certbot.stat.exists == False
+- name: Remove certbot container (shell)
+  shell: docker compose down
+  args:
+    chdir: /home/{{ user }}/certbot
+  tags: certbot
+  when: certbot.stat.exists == false
+  ignore_errors: yes
 
 - name: Remove certbot directory to hide our tracks, err, for cleanliness...
   ansible.builtin.file:
