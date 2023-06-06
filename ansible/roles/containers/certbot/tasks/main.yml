@@ -3,21 +3,27 @@
   ansible.builtin.file:
     path: /home/{{ user }}/certbot
     state: directory
-    mode: '0755'
+    mode: '0777'
+    owner: "{{ user }}"
+    group: "{{ user }}"
   tags: certbot
 
 - name: Create certs/live directory
   ansible.builtin.file:
     path: /home/{{ user }}/certs/live
     state: directory
-    mode: '0755'
+    mode: '0777'
+    owner: "{{ user }}"
+    group: "{{ user }}"
   tags: certbot
 
 - name: Create certs/archive directory
   ansible.builtin.file:
     path: /home/{{ user }}/certs/archive
     state: directory
-    mode: '0755'
+    mode: '0777'
+    owner: "{{ user }}"
+    group: "{{ user }}"
   tags: certbot
 
 - name: Copy nginx config file

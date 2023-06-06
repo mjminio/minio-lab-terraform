@@ -274,6 +274,7 @@
       sysctl_set: yes
       state: present
       reload: yes
+  ignore_errors: yes
   tags:
     - sysctl
     - security
@@ -285,6 +286,7 @@
       sysctl_set: yes
       state: present
       reload: yes
+  ignore_errors: yes
   tags:
     - sysctl
     - security
@@ -296,6 +298,7 @@
       sysctl_set: yes
       state: present
       reload: yes
+  ignore_errors: yes
   tags:
     - sysctl
     - security
@@ -307,6 +310,7 @@
       sysctl_set: yes
       state: present
       reload: yes
+  ignore_errors: yes
   tags:
     - sysctl
     - security

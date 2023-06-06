@@ -85,6 +85,15 @@
     mode: 0755
   tags: minio
 
+- name: Copy keycloak-docker-compose.yml
+  template:
+    src: "core/keycloak-docker-compose.yml.j2"
+    dest: "/home/{{ user }}/minio/tools/deploy/core/keycloak-docker-compose.yml"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: minio
+
 # - name: Copy min-lab-core-cluster-delete.sh
 #   ansible.builtin.copy:
 #     src: files/core/min-lab-core-cluster-delete.sh

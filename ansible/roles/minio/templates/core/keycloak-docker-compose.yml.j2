@@ -1,0 +1,10 @@
+#!/bin/bash
+
+docker run -itd \
+   -p 9058:8443 \
+   --name keycloak \
+   -v /home/{{ user }}/labs/minio-for-admins/minio-iam/realm-minio.json:/opt/keycloak/data/import/realm-minio.json \
+   -v /home/{{ user }}/certs/archive/{{ inventory_hostname }}/:/certs \
+   -e "KEYCLOAK_ADMIN=key" \
+   -e "KEYCLOAK_ADMIN_PASSWORD=thisisabadpass" \
+   quay.io/keycloak/keycloak start-dev --https-certificate-file=/certs/fullchain1.pem --https-certificate-key-file=/certs/privkey1.pem --import-realm

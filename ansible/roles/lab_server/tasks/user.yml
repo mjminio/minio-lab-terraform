@@ -1,0 +1,31 @@
+---
+- name: Add ubuntu user to docker
+  ansible.builtin.user:
+    name: ubuntu
+    groups: docker
+    append: yes
+  tags: user
+
+- name: Add ubuntu user to docker
+  ansible.builtin.user:
+    name: root
+    groups: docker
+    append: yes
+  tags: user
+
+- name: Add {{ user }}
+  ansible.builtin.user:
+    name: "{{ user }}"
+    shell: /bin/zsh
+    groups: sudo, docker
+    append: yes
+    home: /home/{{ user }}
+  tags: user
+
+- name: create .ssh directory for user
+  ansible.builtin.file:
+    path: /home/{{ user }}/.ssh
+    state: directory
+    mode: '0600'
+    owner: "{{ user }}"
+    group: "{{ user }}"

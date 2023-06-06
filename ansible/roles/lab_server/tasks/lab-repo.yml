@@ -5,6 +5,12 @@
     dest: /home/{{ user }}/minio/labs/.git
   ignore_errors: yes
 
+- name: Allow git to use any directory
+  shell: git config --global --add safe.directory '*'
+  args:
+    chdir: /home/{{ user }}/minio/labs
+  tags: lab-server, lab-repo, lab-repo-update
+
 - name: Clone Lab Repo
   ansible.builtin.git:
     repo: "{{ lab_repo_url }}"

@@ -51,6 +51,7 @@ frontend https_in
         use_backend prom_{{ inventory_hostname }} if { hdr_sub(host) prom.{{ inventory_hostname }} }
         use_backend ldap_{{ inventory_hostname }} if { hdr(host) ldap.{{ inventory_hostname }} }
         use_backend phpldap_{{ inventory_hostname }} if { hdr(host) phpldap.{{ inventory_hostname }} }
+        use_backend keycloak_{{ inventory_hostname }} if { hdr(host) keycloak.{{ inventory_hostname }} }
 
 backend code_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:11443 check ssl verify none
@@ -78,6 +79,9 @@ backend minio4_api_{{ inventory_hostname }}
 
 backend minio4_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:9057 check
+
+backend keycloak_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:9058 check ssl verify none
 
 backend prom_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:9090 check

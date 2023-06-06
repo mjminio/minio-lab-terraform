@@ -49,6 +49,35 @@ Deployments are provided "AS-IS" with no guarantee on availability or complete f
   - To deploy Minio using Docker, run `./files/start-minio-docker.sh`
   - To deploy Minio native, run `./files/start-minio-native.sh`
 
+## Running the "Core" Environment in labs
+
+We have a script that will deploy a number of environments for the students to use in the labs. The script deploys the following along with DNS entries for each:
+
+- 4x Minio Servers
+  - minio1.{deployment_name}
+  - minio1-api.{deployment_name}
+  - minio2.{deployment_name}
+  - minio2-api.{deployment_name}
+  - minio3.{deployment_name}
+  - minio3-api.{deployment_name}
+  - minio4.{deployment_name}
+  - minio4-api.{deployment_name}
+- 1x Prometheus Server
+  - prom.{deployment_name}
+- 1x ldap server
+  - ldap.{deployment_name}
+  - phpldap.{deployment_name}
+- 1x Keycloak server
+  - keycloak.{deployment_name}
+
+In order to deploy this environment, call the following from the lab to start a lab scenario:
+
+`/home/minio/minio/tools/deploy/core/min-lab-core-cluster-setup.sh`
+
+To remove this environment at the end of a lab:
+
+`/home/minio/minio/tools/deploy/core/min-lab-core-cluster-delete.sh`
+
 ## Deploying additional environments
 If you would like to deploy multiple environments at the same time and not have them interfere with each other, we have provided a way to do that. We are leveraging `terraform workspaces` to make this happen.
 
