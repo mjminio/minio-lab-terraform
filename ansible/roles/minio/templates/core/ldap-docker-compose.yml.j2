@@ -49,6 +49,8 @@ services:
     # fully-qualified domain name for the host.
     domainname: "{{ inventory_hostname }}"
     hostname: "{{ inventory_hostname }}"
+    networks:
+      - ldap
   phpldapadmin:
     image: osixia/phpldapadmin:latest
     container_name: phpldapadmin
@@ -59,3 +61,9 @@ services:
       - "9060:80"
     depends_on:
       - openldap
+    networks:
+      - ldap
+
+networks:
+  ldap: 
+    external: true

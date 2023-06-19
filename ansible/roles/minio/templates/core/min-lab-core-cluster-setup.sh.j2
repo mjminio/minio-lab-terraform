@@ -44,13 +44,16 @@ docker run -itd \
   -v /home/minio/minio/labs/minio-for-admins/minio-monitoring/config:/etc/prometheus \
   quay.io/prometheus/prometheus
 
+docker network create ldap
+
 docker compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml up -d
 
 docker run -itd \
    -p 9058:8443 \
    --name keycloak \
-   -v /home/{{ user }}/labs/minio-for-admins/minio-iam/realm-minio.json:/opt/keycloak/data/import/realm-minio.json \
+   -v /home/{{ user }}/minio/labs/minio-for-admins/minio-iam/realm-minio.json:/opt/keycloak/data/import/realm-minio.json \
    -v /home/{{ user }}/certs/archive/{{ inventory_hostname }}/:/certs \
    -e "KEYCLOAK_ADMIN=key" \
    -e "KEYCLOAK_ADMIN_PASSWORD=thisisabadpass" \
+   --network ldap \
    quay.io/keycloak/keycloak start-dev --https-certificate-file=/certs/fullchain1.pem --https-certificate-key-file=/certs/privkey1.pem --import-realm
