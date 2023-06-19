@@ -1,5 +1,10 @@
 #!/bin/bash
 
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+echo -e "${GREEN}Starting MinIO server (minio1)...${NC}"
 docker run -itd \
    -p 9050:9000 \
    -p 9051:9090 \
@@ -9,8 +14,15 @@ docker run -itd \
    -e "MINIO_ROOT_PASSWORD=minioadmin" \
    -e "MINIO_PROMETHEUS_URL=https://prom.{{ inventory_hostname }}" \
    -e "MINIO_PROMETHEUS_JOB_ID=minio-job" \
-   quay.io/minio/minio server /data --console-address ":9090"
+   quay.io/minio/minio server /data --console-address ":9090" &> /dev/null
 
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}MinIO server (minio1) started successfully.${NC}"
+else
+  echo -e "${RED}Failed to start MinIO server (minio1).${NC}"
+fi
+
+echo -e "${GREEN}Starting MinIO server (minio2)...${NC}"
 docker run -itd \
    -p 9052:9000 \
    -p 9053:9090 \
@@ -18,8 +30,15 @@ docker run -itd \
    -v /mnt/data/minio2:/data \
    -e "MINIO_ROOT_USER=minioadmin" \
    -e "MINIO_ROOT_PASSWORD=minioadmin" \
-   quay.io/minio/minio server /data --console-address ":9090"
+   quay.io/minio/minio server /data --console-address ":9090" &> /dev/null
 
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}MinIO server (minio2) started successfully.${NC}"
+else
+  echo -e "${RED}Failed to start MinIO server (minio2).${NC}"
+fi
+
+echo -e "${GREEN}Starting MinIO server (minio3)...${NC}"
 docker run -itd \
    -p 9054:9000 \
    -p 9055:9090 \
@@ -27,8 +46,15 @@ docker run -itd \
    -v /mnt/data/minio3:/data \
    -e "MINIO_ROOT_USER=minioadmin" \
    -e "MINIO_ROOT_PASSWORD=minioadmin" \
-   quay.io/minio/minio server /data --console-address ":9090"
+   quay.io/minio/minio server /data --console-address ":9090" &> /dev/null
 
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}MinIO server (minio3) started successfully.${NC}"
+else
+  echo -e "${RED}Failed to start MinIO server (minio3).${NC}"
+fi
+
+echo -e "${GREEN}Starting MinIO server (minio4)...${NC}"
 docker run -itd \
    -p 9056:9000 \
    -p 9057:9090 \
@@ -36,18 +62,46 @@ docker run -itd \
    -v /mnt/data/minio4:/data \
    -e "MINIO_ROOT_USER=minioadmin" \
    -e "MINIO_ROOT_PASSWORD=minioadmin" \
-   quay.io/minio/minio server /data --console-address ":9090"
+   quay.io/minio/minio server /data --console-address ":9090" &> /dev/null
 
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}MinIO server (minio4) started successfully.${NC}"
+else
+  echo -e "${RED}Failed to start MinIO server (minio4).${NC}"
+fi
+
+echo -e "${GREEN}Starting Prometheus server...${NC}"
 docker run -itd \
   -p 9090:9090 \
   --name prom \
   -v /home/minio/minio/labs/minio-for-admins/minio-monitoring/config:/etc/prometheus \
-  quay.io/prometheus/prometheus
+  quay.io/prometheus/prometheus &> /dev/null
 
-docker network create ldap
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}Prometheus server started successfully.${NC}"
+else
+  echo -e "${RED}Failed to start Prometheus server.${NC}"
+fi
 
-docker compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml up -d
+echo -e "${GREEN}Creating 'ldap' network...${NC}"
+docker network create ldap &> /dev/null
 
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}'ldap' network created successfully.${NC}"
+else
+  echo -e "${RED}Failed to create 'ldap' network.${NC}"
+fi
+
+echo -e "${GREEN}Starting LDAP services...${NC}"
+docker compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml up -d &> /dev/null
+
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}LDAP services started successfully.${NC}"
+else
+  echo -e "${RED}Failed to start LDAP services.${NC}"
+fi
+
+echo -e "${GREEN}Starting Keycloak server...${NC}"
 docker run -itd \
    -p 9058:8443 \
    --name keycloak \
@@ -56,4 +110,10 @@ docker run -itd \
    -e "KEYCLOAK_ADMIN=key" \
    -e "KEYCLOAK_ADMIN_PASSWORD=thisisabadpass" \
    --network ldap \
-   quay.io/keycloak/keycloak start-dev --https-certificate-file=/certs/fullchain1.pem --https-certificate-key-file=/certs/privkey1.pem --import-realm
+   quay.io/keycloak/keycloak start-dev --https-certificate-file=/certs/fullchain1.pem --https-certificate-key-file=/certs/privkey1.pem --import-realm &> /dev/null
+
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}Keycloak server started successfully.${NC}"
+else
+  echo -e "${RED}Failed to start Keycloak server.${NC}"
+fi

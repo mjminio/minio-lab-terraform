@@ -1,21 +1,41 @@
 #!/bin/bash
 
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
 CURRENTTIME=`date +"%Y%m%d%H%M%S"`
+
+echo -e "${GREEN}Creating backup of MinIO data...${NC}"
 sudo mkdir -p /mnt/.backup/$CURRENTTIME
 sudo cp -R /mnt/data/* /mnt/.backup/$CURRENTTIME
 
-docker rm -f minio1
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}MinIO data backup created successfully.${NC}"
+else
+  echo -e "${RED}Failed to create MinIO data backup.${NC}"
+fi
+
+echo -e "${GREEN}Stopping and removing MinIO containers...${NC}"
+docker rm -f minio1 &> /dev/null
 sudo rm -rf /mnt/data/minio1
-docker rm -f minio2
+docker rm -f minio2 &> /dev/null
 sudo rm -rf /mnt/data/minio2
-docker rm -f minio3
+docker rm -f minio3 &> /dev/null
 sudo rm -rf /mnt/data/minio3
-docker rm -f minio4
+docker rm -f minio4 &> /dev/null
 sudo rm -rf /mnt/data/minio4
-docker rm -f prom
 
-docker compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml down
+echo -e "${GREEN}Stopping and removing Prometheus container...${NC}"
+docker rm -f prom &> /dev/null
 
-docker rm -f keycloak
+echo -e "${GREEN}Stopping and removing LDAP services...${NC}"
+docker compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml down &> /dev/null
 
-docker network rm ldap
+echo -e "${GREEN}Stopping and removing Keycloak container...${NC}"
+docker rm -f keycloak &> /dev/null
+
+echo -e "${GREEN}Removing 'ldap' network...${NC}"
+docker network rm ldap &> /dev/null
+
+echo -e "${GREEN}Cleanup completed.${NC}"
