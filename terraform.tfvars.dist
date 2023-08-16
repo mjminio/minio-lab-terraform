@@ -36,8 +36,16 @@ aws_region = "us-east-1" #Set your preferred region
 aws_instance_image = "ami-0070c5311b7677678" #Set to the appropriate Ubuntu 20.04 AMI in your selected region. Find the AMI here: https://cloud-images.ubuntu.com/locator/ec2/
 aws_instance_size = "t3a.xlarge"
 
-# Cloudflare variables
+# DNS Options
+# Options are "route53" for AWS Route53, "cloudflare" for Cloudflare DNS
 dns_service = "cloudflare"
+
+# AWS Route53 variables
+aws_rt53_zone_id = "<AWS-ROUTE53-ZONE-ID>"
+aws_rt53_access_key = "<AWS-ROUTE53-ACCESS-KEY>"
+aws_rt53_secret_key = "<AWS-ROUTE53-SECRET-KEY>"
+
+# Cloudflare variables
 cloudflare_email = "<CLOUDFLARE-ACCOUNT-EMAIL>"
 cloudflare_api_token = "<CLOUDFLARE-API-TOKEN>"
 cloudflare_zone_id = "<CLOUDFLARE-DOMAIN-ZONE-ID>"
