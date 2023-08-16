@@ -1,7 +1,7 @@
 # General User variables
 deployment_name = "minio-lab"
 user = "minio"
-environment_domain = "<YOUR-DOMAIN>"
+environment_domain = "learn.min.io"
 letsencrypt_email = "<YOUR-EMAIL>"
 minio_password = "<SOME-COMPLEX-PASSWORD>"
 code_server_password = "<SOME-COMPLEX-PASSWORD>"
@@ -30,7 +30,7 @@ do_os_type = "ubuntu-20-04-x64"
 # AWS Access Info
 aws_access_key = "<YOUR-AWS-ACCESS-KEY>"
 aws_secret_key = "<YOUR-AWS-SECRET-KEY>"
-aws_rt53_zone_id = "<AWS-ROUTE53-ZONE-ID>"
+aws_rt53_zone_id = "Z06122463713QL2W8JFMD"
 
 # AWS variables
 aws_enabled = "false" #Set to "true" to enable AWS. Set to "false" to disable AWS. 
