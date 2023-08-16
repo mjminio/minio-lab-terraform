@@ -1,7 +1,7 @@
 # General User variables
 deployment_name = "minio-lab"
 user = "minio"
-environment_domain = "<YOUR-DOMAIN>"
+environment_domain = "learn.min.io"
 letsencrypt_email = "<YOUR-EMAIL>"
 minio_password = "<SOME-COMPLEX-PASSWORD>"
 code_server_password = "<SOME-COMPLEX-PASSWORD>"
@@ -15,8 +15,9 @@ gh_pat = "ghp_121212121212121212121212212"
 hcloud_enabled = "true" #Set to "true" to enable HCloud. Set to "false" to disable HCloud.
 hcloud_token = "<YOUR-HCLOUD-TOKEN>"
 hcloud_server_count = 1
+# Region Options are: DE Falkenstein `fsn1`, DE Nuremberg `nbg1`, FI Helsinki `hel1`, US Ashburn, VA `ash`, US Hillsboro, OR `hil`
 hcloud_location = "ash" #Set your preferred region
-hcloud_server_type = "cpx31"
+hcloud_server_type = "cpx41"
 hcloud_os_type = "ubuntu-20.04"
 
 # DigitalOcean (DO) variables
@@ -27,17 +28,23 @@ do_region = "nyc3" #Set your preferred region
 do_droplet_size = "s-4vcpu-8gb"
 do_os_type = "ubuntu-20-04-x64"
 
-# AWS variables
-aws_enabled = "false" #Set to "true" to enable AWS. Set to "false" to disable AWS. 
+# AWS Access Info
 aws_access_key = "<YOUR-AWS-ACCESS-KEY>"
 aws_secret_key = "<YOUR-AWS-SECRET-KEY>"
+aws_rt53_zone_id = "Z06122463713QL2W8JFMD"
+
+# AWS variables
+aws_enabled = "false" #Set to "true" to enable AWS. Set to "false" to disable AWS. 
 aws_instance_count = "0"
 aws_region = "us-east-1" #Set your preferred region
 aws_instance_image = "ami-0070c5311b7677678" #Set to the appropriate Ubuntu 20.04 AMI in your selected region. Find the AMI here: https://cloud-images.ubuntu.com/locator/ec2/
 aws_instance_size = "t3a.xlarge"
 
-# Cloudflare variables
+# DNS Options
+# Options are "route53" for AWS Route53, "cloudflare" for Cloudflare DNS
 dns_service = "cloudflare"
+
+# Cloudflare variables
 cloudflare_email = "<CLOUDFLARE-ACCOUNT-EMAIL>"
 cloudflare_api_token = "<CLOUDFLARE-API-TOKEN>"
 cloudflare_zone_id = "<CLOUDFLARE-DOMAIN-ZONE-ID>"

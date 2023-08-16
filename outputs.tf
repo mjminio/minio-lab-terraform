@@ -48,6 +48,8 @@ resource "local_file" "ansible_all" {
       gh_pat = var.gh_pat
       haproxy_password = var.haproxy_password
       codelab_version = var.codelab_version
+      aws_access_key = var.aws_access_key
+      aws_secret_key = var.aws_secret_key
       }
     )
   filename = "./ansible/inventory/${var.deployment_name}/group_vars/all.yml"

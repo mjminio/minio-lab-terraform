@@ -27,17 +27,22 @@ variable "do_region" {}
 variable "do_droplet_size" {default = "s-4vcpu-8gb"}
 variable "do_os_type" {default = "ubuntu-20-04-x64"}
 
-# AWS variables
-variable "aws_enabled" {}
+# AWS Access Info
 variable "aws_access_key" {}
 variable "aws_secret_key" {}
+variable "aws_rt53_zone_id" {}
+
+# AWS variables
+variable "aws_enabled" {}
 variable "aws_region" {}
 variable "aws_instance_count" {}
 variable "aws_instance_image" {}
 variable "aws_instance_size" {}
 
-#Cloudflare variables
+# DNS Options
 variable "dns_service" {}
+
+#Cloudflare variables
 variable "cloudflare_email" {}
 variable "cloudflare_api_token" {}
 variable "cloudflare_zone_id" {}

@@ -1,0 +1,30 @@
+version: '3'
+services:
+
+  certbot:
+    image: certbot/dns-route53
+    environment:
+      - AWS_ACCESS_KEY_ID={{ aws_access_key }}
+      - AWS_SECRET_ACCESS_KEY={{ aws_secret_key }}
+    volumes:
+      - /home/{{ user }}/certbot:/etc/letsencrypt
+      - /home/{{ user }}/certbot/nginx.conf:/etc/nginx/nginx.conf
+    command: >-
+      certonly --dns-route53
+      --email {{ letsencrypt_email }}
+      --agree-tos --no-eff-email
+      --force-renewal
+      -d {{ inventory_hostname }}
+      -d *.{{ inventory_hostname }}
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: "always"
+    volumes:
+      - /home/{{ user }}/certbot/nginx.conf:/etc/nginx/nginx.conf
+      - /home/{{ user }}/certbot:/etc/letsencrypt
+
+volumes:
+  certbot_etc:
