@@ -15,8 +15,9 @@ gh_pat = "ghp_121212121212121212121212212"
 hcloud_enabled = "true" #Set to "true" to enable HCloud. Set to "false" to disable HCloud.
 hcloud_token = "<YOUR-HCLOUD-TOKEN>"
 hcloud_server_count = 1
+# Region Options are: DE Falkenstein `fsn1`, DE Nuremberg `nbg1`, FI Helsinki `hel1`, US Ashburn, VA `ash`, US Hillsboro, OR `hil`
 hcloud_location = "ash" #Set your preferred region
-hcloud_server_type = "cpx31"
+hcloud_server_type = "cpx41"
 hcloud_os_type = "ubuntu-20.04"
 
 # DigitalOcean (DO) variables
