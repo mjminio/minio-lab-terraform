@@ -61,6 +61,11 @@ frontend https_in
         use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) minio-console-https.{{ inventory_hostname }} }
         use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) minio-api-https.{{ inventory_hostname }} }
 
+        use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) tenant1-api-https.{{ inventory_hostname }} }
+        use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) tenant1-console-https.{{ inventory_hostname }} }
+        use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) tenant2-api-https.{{ inventory_hostname }} }
+        use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) tenant2-console-https.{{ inventory_hostname }} }
+
 backend code_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:11443 check ssl verify none
 
