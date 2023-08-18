@@ -72,7 +72,7 @@ fi
 
 echo -e "${GREEN}Starting Prometheus server...${NC}"
 docker run -itd \
-  -p 9090:9090 \
+  -p 9070:9090 \
   --name prom \
   -v /home/minio/minio/labs/minio-for-admins/minio-monitoring/config:/etc/prometheus \
   quay.io/prometheus/prometheus &> /dev/null

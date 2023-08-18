@@ -224,11 +224,11 @@
 - name: Copy minio systemd config file
   template:
     src: "minio-config.j2"
-    dest: "/etc/default/minio"
+    dest: "/home/{{ user }}/minio/tools/deploy/native/minio-config"
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0755
-  tags: minio
+  tags: minio, minio-config
 
 - name: Copy minio systemd config file example
   template:
