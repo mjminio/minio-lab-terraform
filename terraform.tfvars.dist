@@ -44,6 +44,7 @@ aws_instance_size = "t3a.xlarge"
 # Options are "route53" for AWS Route53, "cloudflare" for Cloudflare DNS
 dns_service = "route53"
 
+
 # Cloudflare variables
 cloudflare_email = "<CLOUDFLARE-ACCOUNT-EMAIL>"
 cloudflare_api_token = "<CLOUDFLARE-API-TOKEN>"
