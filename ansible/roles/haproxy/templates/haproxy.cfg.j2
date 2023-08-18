@@ -52,6 +52,14 @@ frontend https_in
         use_backend ldap_{{ inventory_hostname }} if { hdr(host) ldap.{{ inventory_hostname }} }
         use_backend phpldap_{{ inventory_hostname }} if { hdr(host) phpldap.{{ inventory_hostname }} }
         use_backend keycloak_{{ inventory_hostname }} if { hdr(host) keycloak.{{ inventory_hostname }} }
+        use_backend minio_{{ inventory_hostname }} if { hdr(host) minio.{{ inventory_hostname }} }
+        use_backend minio_api_{{ inventory_hostname }} if { hdr(host) minio-api.{{ inventory_hostname }} }
+        use_backend ingress_http_{{ inventory_hostname }} if { hdr(host) minio-dev-http.{{ inventory_hostname }} }
+        use_backend ingress_http_{{ inventory_hostname }} if { hdr(host) minio-console-http.{{ inventory_hostname }} }
+        use_backend ingress_http_{{ inventory_hostname }} if { hdr(host) minio-api-http.{{ inventory_hostname }} }
+        use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) minio-dev-https.{{ inventory_hostname }} }
+        use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) minio-console-https.{{ inventory_hostname }} }
+        use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) minio-api-https.{{ inventory_hostname }} }
 
 backend code_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:11443 check ssl verify none
@@ -84,7 +92,7 @@ backend keycloak_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:9058 check ssl verify none
 
 backend prom_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:9090 check
+        server {{ inventory_hostname }} {{ ansible_host }}:9070 check
 
 backend ldap_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:389 check
@@ -92,3 +100,14 @@ backend ldap_{{ inventory_hostname }}
 backend phpldap_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:9060 check
 
+backend minio_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:9090 check
+
+backend minio_api_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:9000 check
+
+backend ingress_http_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:31000 check
+
+backend ingress_https_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:31001 check ssl verify none
