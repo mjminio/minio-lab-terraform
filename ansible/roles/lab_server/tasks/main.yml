@@ -1,4 +1,4 @@
 ---
-- include: setup.yml
-- include: lab-repo.yml
-- include: k8s.yml
+- include_tasks: setup.yml
+- include_tasks: lab-repo.yml
+- include_tasks: k8s.yml

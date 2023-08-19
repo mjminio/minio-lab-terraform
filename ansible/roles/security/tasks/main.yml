@@ -1,6 +1,6 @@
 ---
-- include: security.yml
-- include: sysctl.yml
-- include: limits.yml
-- include: packages.yml
-- include: config.yml
+- include_tasks: security.yml
+- include_tasks: sysctl.yml
+- include_tasks: limits.yml
+- include_tasks: packages.yml
+- include_tasks: config.yml
