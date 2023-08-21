@@ -4,11 +4,11 @@
     pkg: [
       'apt-listchanges',
       'apt-transport-https', 
-      'auditd', 
+      #'auditd',
       'ca-certificates', 
       'fail2ban', 
       'unattended-upgrades',
-      'auditd',
+      #'auditd',
     ]
     state: latest
     update_cache: yes

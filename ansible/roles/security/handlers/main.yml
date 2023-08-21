@@ -1,17 +1,17 @@
 ---
 ## Ubuntu Handler - main.yml
 
-- name: reload auditd
-  service: name=auditd state=reloaded enabled=yes
-
-- name: restart auditd
-  service: name=auditd state=restarted enabled=yes
-
-- name: start auditd
-  service: name=auditd state=started enabled=yes
-
-- name: stop auditd
-  service: name=auditd state=stopped enabled=yes
+#- name: reload auditd
+#  service: name=auditd state=reloaded enabled=yes
+#
+#- name: restart auditd
+#  service: name=auditd state=restarted enabled=yes
+#
+#- name: start auditd
+#  service: name=auditd state=started enabled=yes
+#
+#- name: stop auditd
+#  service: name=auditd state=stopped enabled=yes
   
 
 - name: reload fail2ban

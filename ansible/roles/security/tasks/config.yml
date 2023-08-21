@@ -1,17 +1,17 @@
 ---
-- name: Config - AUDIT - Copy audit rules 
-  copy:
-    src: files/audit/
-    dest: /etc/audit/rules.d/
-    owner: root
-    group: root
-    mode: 0640
-  notify:
-    - restart auditd
-  tags:
-    - audit
-    - config
-    - security
+#- name: Config - AUDIT - Copy audit rules
+#  copy:
+#    src: files/audit/
+#    dest: /etc/audit/rules.d/
+#    owner: root
+#    group: root
+#    mode: 0640
+#  notify:
+#    - restart auditd
+#  tags:
+#    - audit
+#    - config
+#    - security
 
 - name: Config - FAIL2BAN - Copy jail.j2 file to /etc/fail2ban directory
   template:
