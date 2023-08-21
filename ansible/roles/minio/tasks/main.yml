@@ -7,6 +7,15 @@
     mode: '0777'
   tags: minio
 
+- name: Create minio directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/minio
+    state: directory
+    mode: '0777'
+    owner: "{{ user }}"
+    group: "{{ user }}"
+  tags: minio
+
 - name: Create a symbolic link to /mnt/data
   ansible.builtin.file:
     src: /mnt/data
