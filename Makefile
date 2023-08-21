@@ -6,7 +6,7 @@ COLOR_GREEN=$(shell echo "\033[0;32m")
 COLOR_RED=$(shell echo "\033[0;31m")
 COLOR_END=$(shell echo "\033[0;0m")
 
-DEPLOYMENT := $(shell grep deployment_name terraform.tfvars | awk -F'=' {'print $$2'} | tr -d \" | tr -d \ )
+DEPLOYMENT := $(shell grep deployment_name terraform.tfvars | awk -F'=' {'print $2'} | tr -d \" | tr -d \ )
 BUFFER_ITERATIONS = 6
 BUFFER_SLEEP = 10
 

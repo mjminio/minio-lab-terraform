@@ -9,16 +9,16 @@
   gather_facts: yes
   become: yes
   roles:
-    #    - role: geerlingguy.docker
-    #  docker_edition: "ce"
-    #  docker_packages: 
-    #    - "docker-ce=5:23.0.3-1~{{ ansible_distribution | lower }}.20.04~{{ ansible_distribution_release }}"
-    #    - "docker-ce-cli=5:23.0.3-1~{{ ansible_distribution | lower }}.20.04~{{ ansible_distribution_release }}"
-    #    - "docker-ce-rootless-extras=5:23.0.3-1~{{ ansible_distribution | lower }}.20.04~{{ ansible_distribution_release }}"
-    #  docker_packages_state: present
-    #  docker_users:
-    #    - "{{ ansible_user }}"
-    #    - "{{ user }}"
+    - role: geerlingguy.docker
+      docker_edition: "ce"
+      docker_packages:
+        - "docker-ce=5:23.0.3-1~{{ ansible_distribution | lower }}.20.04~{{ ansible_distribution_release }}"
+        - "docker-ce-cli=5:23.0.3-1~{{ ansible_distribution | lower }}.20.04~{{ ansible_distribution_release }}"
+        - "docker-ce-rootless-extras=5:23.0.3-1~{{ ansible_distribution | lower }}.20.04~{{ ansible_distribution_release }}"
+      docker_packages_state: present
+      docker_users:
+        - "{{ ansible_user }}"
+        - "{{ user }}"
     #- role: lab_server
     #- role: containers/certbot
     #- role: haproxy

@@ -1,6 +1,6 @@
 locals {
-  names = concat(hcloud_server.minio_lab_server[*].name, digitalocean_droplet.minio_lab_server[*].name, aws_instance.minio_lab_server[*].tags.Name)
-  ips = concat(hcloud_server.minio_lab_server[*].ipv4_address, digitalocean_droplet.minio_lab_server[*].ipv4_address, aws_instance.minio_lab_server[*].public_ip)
+  names = concat(hcloud_server.minio_lab_server[*].name, digitalocean_droplet.minio_lab_server[*].name, aws_instance.minio_lab_server[*].tags.Name, vm_broker_instance.minio_lab_server[*].tags.Name)
+  ips = concat(hcloud_server.minio_lab_server[*].ipv4_address, digitalocean_droplet.minio_lab_server[*].ipv4_address, aws_instance.minio_lab_server[*].public_ip, vm_broker_instance.minio_lab_server[*].public_ip)
 }
 
 ## Ansible Outputs
@@ -12,6 +12,8 @@ resource "local_file" "ansible_inventory" {
       do_name = digitalocean_droplet.minio_lab_server[*].name,
       aws_minio_ips = aws_instance.minio_lab_server[*].public_ip,
       aws_name = aws_instance.minio_lab_server[*].tags.Name,
+      vm_broker_minio_ips = vm_broker_instance.minio_lab_server[*].public_ip,
+      vm_broker_name = vm_broker_instance.minio_lab_server[*].tags.Name,
       private_key = "./files/${var.deployment_name}/${var.deployment_name}-private-key.pem",
       user = var.user,
       deployment_name = var.deployment_name,
@@ -108,6 +110,8 @@ resource "local_file" "mc_setup" {
       do_name = digitalocean_droplet.minio_lab_server[*].name,
       aws_minio_ips = aws_instance.minio_lab_server[*].public_ip,
       aws_name = aws_instance.minio_lab_server[*].tags.Name,
+      vm_broker_minio_ips = vm_broker_instance.minio_lab_server[*].public_ip,
+      vm_broker_name = vm_broker_instance.minio_lab_server[*].tags.Name,
       user = var.user
       }
     )

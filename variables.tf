@@ -27,6 +27,12 @@ variable "do_region" {}
 variable "do_droplet_size" {default = "s-4vcpu-8gb"}
 variable "do_os_type" {default = "ubuntu-20-04-x64"}
 
+# vm-broker (vm_broker) variables
+variable "vm_broker_enabled" {}
+variable "vm_broker_token" {}
+variable "vm_broker_server_count" {default = "1"}
+variable "vm_broker_os_type" {default = "ubuntu-20.04"}
+
 # AWS Access Info
 variable "aws_access_key" {}
 variable "aws_secret_key" {}
