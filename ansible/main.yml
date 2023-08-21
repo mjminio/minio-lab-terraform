@@ -19,9 +19,9 @@
       docker_users:
         - "{{ ansible_user }}"
         - "{{ user }}"
-    #- role: lab_server
-    #- role: containers/certbot
-    #- role: haproxy
+    - role: lab_server
+    - role: containers/certbot
+    - role: haproxy
     #- role: code-server
     #- role: k3s
     - role: minio
