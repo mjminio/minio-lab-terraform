@@ -22,7 +22,7 @@
     - role: lab_server
     - role: containers/certbot
     - role: haproxy
-    #- role: code-server
-    #- role: k3s
+    - role: code-server
+    - role: k3s
     - role: minio
-    #- role: post-deploy
+    - role: post-deploy
