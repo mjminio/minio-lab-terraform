@@ -194,7 +194,7 @@
 
 - name: Copy private key
   ansible.builtin.copy:
-    src: files/{{ deployment_name }}/{{ deployment_name }}-private-key.pem
+    src: ../../../../files/{{ deployment_name }}/{{ deployment_name }}-private-key.pem
     dest: "/home/{{ user }}/.ssh/id_rsa.pem"
     owner: "{{ user }}"
     group: "{{ user }}"
