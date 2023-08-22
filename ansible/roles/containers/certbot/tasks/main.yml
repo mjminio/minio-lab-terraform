@@ -55,6 +55,16 @@
   tags: certbot
   when: dns_service == "route53"
 
+- name: Copy google docker-compose config file
+  template:
+    src: "docker-compose-google.yml.j2"
+    dest: "/home/{{ user }}/certbot/docker-compose.yml"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: certbot
+  when: dns_service == "google"
+
 - name: Copy cloudflare.ini file
   ansible.builtin.copy:
     src: files/{{ deployment_name }}/cloudflare.ini
