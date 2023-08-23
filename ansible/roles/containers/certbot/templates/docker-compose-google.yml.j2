@@ -11,8 +11,9 @@ services:
       certonly
       --dns-google
       --dns-google-credentials /var/dns-svc-acct.json
-      --email {{ letsencrypt_email }}
-      --agree-tos --no-eff-email
+      --agree-tos
+      --no-eff-email
+      --non-interactive
       --force-renewal
       -d {{ inventory_hostname }}
       -d *.{{ inventory_hostname }}
