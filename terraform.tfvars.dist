@@ -18,7 +18,7 @@ hcloud_server_count = 1
 # Region Options are: DE Falkenstein `fsn1`, DE Nuremberg `nbg1`, FI Helsinki `hel1`, US Ashburn, VA `ash`, US Hillsboro, OR `hil`
 hcloud_location = "ash" #Set your preferred region
 hcloud_server_type = "cpx41"
-hcloud_os_type = "ubuntu-20.04"
+hcloud_os_type = "ubuntu-23.04"
 
 # DigitalOcean (DO) variables
 do_enabled = "false" #Set to "true" to enable DO. Set to "false" to disable DO.
@@ -37,7 +37,7 @@ aws_rt53_zone_id = "Z06122463713QL2W8JFMD"
 aws_enabled = "false" #Set to "true" to enable AWS. Set to "false" to disable AWS. 
 aws_instance_count = "0"
 aws_region = "us-east-1" #Set your preferred region
-aws_instance_image = "ami-0070c5311b7677678" #Set to the appropriate Ubuntu 20.04 AMI in your selected region. Find the AMI here: https://cloud-images.ubuntu.com/locator/ec2/
+aws_instance_image = "ami-0070c5311b7677678" #Set to the appropriate Ubuntu 23.04 AMI in your selected region. Find the AMI here: https://cloud-images.ubuntu.com/locator/ec2/
 aws_instance_size = "t3a.xlarge"
 
 # DNS Options

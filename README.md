@@ -22,7 +22,7 @@ This is in **ALPHA** and major changes will be made before it is ready for gener
   - Hetzner Cloud
 
 ## Components Deployed
-- Ubuntu 20.04 Server(s)
+- Ubuntu 23.04 Server(s)
 - VSCode Server
 - Various Minio deployment code
 
