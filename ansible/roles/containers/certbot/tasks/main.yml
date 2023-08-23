@@ -95,7 +95,7 @@
 
 - name: Check if cert has already been created
   stat:
-    path: /etc/letsencrypt/live/{{ inventory_hostname }}/fullchain.pem
+    path: /home/{{ user }}/certs/live/{{ inventory_hostname }}/fullchain.pem
   register: certbot
   tags: certbot
 
@@ -109,7 +109,7 @@
 
 - name: Waiting approx 90 seconds for certificate to be created. (It's how the certbot container works, what do you want from me?)
   wait_for:
-    path: /etc/letsencrypt/live/{{ inventory_hostname }}/fullchain.pem
+    path: /home/{{ user }}/certbot/live/{{ inventory_hostname }}/fullchain.pem
     state: present
   tags: certbot
   when: certbot.stat.exists == False
@@ -125,8 +125,8 @@
   when: certbot.stat.exists == false
 
 - name: combine cert.pem and privkey.pem for haproxy
-  ansible.builtin.shell: 
-    cmd: cat /etc/letsencrypt/live/{{ inventory_hostname }}/fullchain.pem /etc/letsencrypt/live/{{ inventory_hostname }}/privkey.pem | tee /home/{{ user }}/certs/live/{{ inventory_hostname }}/cert-bundle.pem
+  ansible.builtin.shell:
+    cmd: cat fullchain.pem privkey.pem | tee cert-bundle.pem
     chdir: /home/{{ user }}/certs/live/{{ inventory_hostname }}/
   tags: certbot
 
