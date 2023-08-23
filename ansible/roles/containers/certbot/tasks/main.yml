@@ -84,6 +84,15 @@
     mode: '0777'
   tags: certbot
 
+- name: Copy dns.json file
+  ansible.builtin.copy:
+    src: files/dns-svc-acct.json
+    dest: /home/{{ user }}/certbot
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0400'
+  tags: certbot
+
 - name: Check if cert has already been created
   stat:
     path: /home/{{ user }}/certs/live/{{ inventory_hostname }}/fullchain.pem
