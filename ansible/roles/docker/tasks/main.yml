@@ -50,6 +50,7 @@
     name:
         - docker
         - docker-compose
+    extra_args: "--break-system-packages"
 
 - name: Add ansible user to docker group
   user:
