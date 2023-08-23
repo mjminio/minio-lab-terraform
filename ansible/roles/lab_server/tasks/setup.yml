@@ -162,7 +162,7 @@
 - name: Run dotfiles install
   become: true
   become_user: "{{ user }}"
-  shell: cd /home/{{ user }}/dotfiles && sudo chmod +x install.sh && ./install.sh
+  shell: cd /home/{{ user }}/dotfiles && sudo chmod +x install.sh && echo " --break-system-packages" | sudo tee -a install.sh && ./install.sh
   when: dotfiles.stat.exists == false
   tags: lab-server, ab-dotfiles
 
