@@ -205,6 +205,7 @@
 - name: Install python Docker / Docker-compose module
   pip:
     name:
+        - PyYAML==5.3.1
         - docker
         - docker-compose
     extra_args: "--break-system-packages"
