@@ -20,8 +20,8 @@
 #        - "{{ ansible_user }}"
 #        - "{{ user }}"
     - role: lab_server
-    - role: containers/certbot
     - role: k3s
+    - role: containers/certbot
     - role: haproxy
     - role: code-server
     - role: minio
