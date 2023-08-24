@@ -27,8 +27,14 @@
   tags: k3s
 
 #- name: Download and install k3s server
-#  shell: curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" K3S_KUBECONFIG_MODE="644" sh -s -
+#  shell: curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik agent --snapshotter=native" K3S_KUBECONFIG_MODE="644" sh -s -
 #  tags: k3s
+
+- name: Download and install podman
+  shell: sudo apt-get update -y && sudo apt install podman && sudo sed -i "s/# unqualified-search-registries.*/unqualified-search-registries\ =\ [\"docker.io\"]/" /etc/containers/registries.conf && sudo apt install podman-docker && sudo apt install python3-pip && pip3 install podman-compose --break-system-packages
+  args:
+    chdir: /home/{{ user }}/kind
+  tags: k3s
 
 - name: Download and install kind
   shell: curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64 && chmod +x ./kind && sudo mv ./kind /usr/local/bin/kind
@@ -36,7 +42,15 @@
     chdir: /home/{{ user }}/kind
   tags: k3s
 
+- name: Delete kind cluster
+  become_user: "{{ user }}"
+  shell: kind delete cluster
+  args:
+    chdir: /home/{{ user }}/kind
+  tags: k3s
+
 - name: Create kind cluster
+  become_user: "{{ user }}"
   shell: kind create cluster --config kind-config.yaml
   args:
     chdir: /home/{{ user }}/kind
