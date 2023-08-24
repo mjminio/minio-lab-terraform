@@ -168,7 +168,7 @@
   tags: certbot
 
 - name: Remove certbot container (shell)
-  shell: docker compose down
+  shell: docker-compose down
   args:
     chdir: /home/{{ user }}/certbot
   tags: certbot

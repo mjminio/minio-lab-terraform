@@ -30,7 +30,7 @@ echo -e "${GREEN}Stopping and removing Prometheus container...${NC}"
 docker rm -f prom &> /dev/null
 
 echo -e "${GREEN}Stopping and removing LDAP services...${NC}"
-docker compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml down &> /dev/null
+docker-compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml down &> /dev/null
 
 echo -e "${GREEN}Stopping and removing Keycloak container...${NC}"
 docker rm -f keycloak &> /dev/null

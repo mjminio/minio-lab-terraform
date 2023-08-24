@@ -4,6 +4,8 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+sudo mkdir -p /mnt/data/minio1 /mnt/data/minio2 /mnt/data/minio3 /mnt/data/minio4
+
 echo -e "${GREEN}Starting MinIO server (minio1)...${NC}"
 docker run -itd \
    -p 9050:9000 \
@@ -74,7 +76,7 @@ echo -e "${GREEN}Starting Prometheus server...${NC}"
 docker run -itd \
   -p 9070:9090 \
   --name prom \
-  -v /home/minio/minio/labs/minio-for-admins/minio-monitoring/config:/etc/prometheus \
+  -v /home/{{ user }}/minio/labs/minio-for-admins/minio-monitoring/config:/etc/prometheus \
   quay.io/prometheus/prometheus &> /dev/null
 
 if [ $? -eq 0 ]; then
@@ -93,7 +95,7 @@ else
 fi
 
 echo -e "${GREEN}Starting LDAP services...${NC}"
-docker compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml up -d &> /dev/null
+docker-compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml up -d &> /dev/null
 
 if [ $? -eq 0 ]; then
   echo -e "${GREEN}LDAP services started successfully.${NC}"
