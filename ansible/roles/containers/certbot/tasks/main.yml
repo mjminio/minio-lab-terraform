@@ -100,7 +100,7 @@
   tags: certbot
 
 - name: Create and start certbot container (shell)
-  shell: docker compose up -d
+  shell: docker-compose up -d
   args:
     chdir: /home/{{ user }}/certbot
   register: output
