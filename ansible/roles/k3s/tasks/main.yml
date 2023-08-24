@@ -31,7 +31,7 @@
 #  tags: k3s
 
 - name: Download and install podman
-  shell: sudo apt-get update -y && sudo apt install podman && sudo sed -i "s/# unqualified-search-registries.*/unqualified-search-registries\ =\ [\"docker.io\"]/" /etc/containers/registries.conf && sudo apt install podman-docker && sudo apt install python3-pip && pip3 install podman-compose --break-system-packages
+  shell: sudo apt-get update -y && sudo apt install podman -y && sudo sed -i "s/# unqualified-search-registries.*/unqualified-search-registries\ =\ [\"docker.io\"]/" /etc/containers/registries.conf && sudo apt install podman-docker -y && sudo apt install python3-pip && pip3 install podman-compose --break-system-packages
   args:
     chdir: /home/{{ user }}/kind
   tags: k3s
