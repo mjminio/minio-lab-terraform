@@ -5,6 +5,8 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 sudo mkdir -p /mnt/data/minio1 /mnt/data/minio2 /mnt/data/minio3 /mnt/data/minio4
+#Create /etc/containers/nodocker to quiet msg.
+sudo touch /etc/containers/nodocker
 
 echo -e "${GREEN}Starting MinIO server (minio1)...${NC}"
 docker run -itd \
