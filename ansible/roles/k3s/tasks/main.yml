@@ -30,11 +30,11 @@
 #  shell: curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik agent --snapshotter=native" K3S_KUBECONFIG_MODE="644" sh -s -
 #  tags: k3s
 
-- name: Download and install podman
-  shell: sudo sed -i "s/# unqualified-search-registries.*/unqualified-search-registries\ =\ [\"docker.io\"]/" /etc/containers/registries.conf
-  args:
-    chdir: /home/{{ user }}/kind
-  tags: k3s
+#- name: Download and install podman
+#  shell: sudo sed -i "s/# unqualified-search-registries.*/unqualified-search-registries\ =\ [\"docker.io\"]/" /etc/containers/registries.conf
+#  args:
+#    chdir: /home/{{ user }}/kind
+#  tags: k3s
 
 - name: Install apt packages
   apt:
