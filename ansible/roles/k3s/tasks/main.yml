@@ -30,14 +30,14 @@
 #  shell: curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" K3S_KUBECONFIG_MODE="644" sh -s -
 #  tags: k3s
 
-- name: Download and install kubectl
-  shell: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+- name: Download and install kind
+  shell: curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64 && chmod +x ./kind && sudo mv ./kind /usr/local/bin/kind
   args:
     chdir: /home/{{ user }}/kind
   tags: k3s
 
-- name: Download and install kind
-  shell: curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64 && chmod +x ./kind && sudo mv ./kind /usr/local/bin/kind
+- name: Create kind cluster
+  shell: kind create cluster --config kind-config.yaml
   args:
     chdir: /home/{{ user }}/kind
   tags: k3s
