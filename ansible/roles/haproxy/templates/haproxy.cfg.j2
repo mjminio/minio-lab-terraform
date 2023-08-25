@@ -67,7 +67,7 @@ frontend https_in
         use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) tenant2-console-https.{{ inventory_hostname }} }
 
 backend code_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:11443 check ssl verify none
+        server {{ inventory_hostname }} {{ ansible_host }}:9043 check ssl verify none
 
 backend minio1_api_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:9050 check

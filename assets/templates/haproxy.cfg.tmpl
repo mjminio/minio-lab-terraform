@@ -46,7 +46,7 @@ frontend https_in
 
 %{ for index, name in server_name ~}
 backend code_${name}
-        server ${name} ${lab_server_ips[index]}:11443 check ssl verify none
+        server ${name} ${lab_server_ips[index]}:9043 check ssl verify none
 
 backend haproxy_${name}
         server ${name} ${lab_server_ips[index]}:9090 check ssl verify none
