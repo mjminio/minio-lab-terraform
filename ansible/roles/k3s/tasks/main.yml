@@ -49,7 +49,7 @@
   until: apt_action is success or ('Failed to lock apt for exclusive operation' not in apt_action.msg and '/var/lib/dpkg/lock' not in apt_action.msg)
 
 - name: Download and install podman
-  shell: pip3 install podman-compose --break-system-packages
+  shell: pip3 install podman-compose --user --break-system-packages
   tags: k3s
 
 - name: Download and install kind

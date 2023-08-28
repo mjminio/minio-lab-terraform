@@ -97,7 +97,7 @@ else
 fi
 
 echo -e "${GREEN}Starting LDAP services...${NC}"
-sudo docker-compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml up -d &> /dev/null
+podman-compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml up -d &> /dev/null
 
 if [ $? -eq 0 ]; then
   echo -e "${GREEN}LDAP services started successfully.${NC}"
