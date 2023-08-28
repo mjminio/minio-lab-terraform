@@ -106,7 +106,8 @@
   tags: certbot
 
 - name: Create and start certbot container (shell)
-  shell: /home/ubuntu/.local/bin/podman-compose up -d
+  shell: /home/{{ user }}/.local/bin/podman-compose up -d
+  become_user: "{{ user }}"
   args:
     chdir: /home/{{ user }}/certbot
   register: output
@@ -181,6 +182,7 @@
 
 - name: Remove certbot container (shell)
   shell: /home/ubuntu/.local/bin/podman-compose down
+  become_user: "{{ user }}"
   args:
     chdir: /home/{{ user }}/certbot
   tags: certbot
