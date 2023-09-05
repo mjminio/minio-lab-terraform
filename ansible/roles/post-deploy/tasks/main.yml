@@ -12,17 +12,5 @@
   become_user: "{{ user }}"
   tags: postdeploy
 
-- name: Check if reboot required
-  stat:
-    path: /var/run/reboot-required
-  register: reboot_required_file
-  tags:
-    - never
-    - reboot
-
-- name: Reboot if required
+- name: Reboot
   reboot:
-  when: reboot_required_file.stat.exists == true
-  tags:
-    - never
-    - reboot
