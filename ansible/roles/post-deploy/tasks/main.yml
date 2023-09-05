@@ -7,6 +7,11 @@
     mode: '0755'
   tags: postdeploy
 
+- name: Enable linger (shell)
+  shell: loginctl enable-linger {{ user }}
+  become_user: "{{ user }}"
+  tags: postdeploy
+
 - name: Check if reboot required
   stat:
     path: /var/run/reboot-required
