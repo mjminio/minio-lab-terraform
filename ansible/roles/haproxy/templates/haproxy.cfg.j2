@@ -60,11 +60,16 @@ frontend https_in
         use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) minio-dev-https.{{ inventory_hostname }} }
         use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) minio-console-https.{{ inventory_hostname }} }
         use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) minio-api-https.{{ inventory_hostname }} }
+        use_backend flask_{{ inventory_hostname }} if { hdr(host) flask.{{ inventory_hostname }} }
 
-        use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) tenant1-api-https.{{ inventory_hostname }} }
-        use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) tenant1-console-https.{{ inventory_hostname }} }
-        use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) tenant2-api-https.{{ inventory_hostname }} }
-        use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) tenant2-console-https.{{ inventory_hostname }} }
+        use_backend tenant1_api_nodeport_{{ inventory_hostname }} if { hdr(host) tenant1-api-https.{{ inventory_hostname }} }
+        use_backend tenant1_console_nodeport_{{ inventory_hostname }} if { hdr(host) tenant1-console-https.{{ inventory_hostname }} }
+        use_backend tenant2_api_nodeport_{{ inventory_hostname }} if { hdr(host) tenant2-api-https.{{ inventory_hostname }} }
+        use_backend tenant2_console_nodeport_{{ inventory_hostname }} if { hdr(host) tenant2-console-https.{{ inventory_hostname }} }
+        use_backend tenant3_api_nodeport_{{ inventory_hostname }} if { hdr(host) tenant3-api-https.{{ inventory_hostname }} }
+        use_backend tenant3_console_nodeport_{{ inventory_hostname }} if { hdr(host) tenant3-console-https.{{ inventory_hostname }} }
+        use_backend tenant4_api_nodeport_{{ inventory_hostname }} if { hdr(host) tenant4-api-https.{{ inventory_hostname }} }
+        use_backend tenant4_console_nodeport_{{ inventory_hostname }} if { hdr(host) tenant4-console-https.{{ inventory_hostname }} }
 
 backend code_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:11443 check ssl verify none
@@ -116,3 +121,30 @@ backend ingress_http_{{ inventory_hostname }}
 
 backend ingress_https_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:31001 check ssl verify none
+        
+backend tenant1_api_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30010 check ssl verify none
+
+backend tenant1_console_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30011 check ssl verify none
+
+backend tenant2_api_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30020 check ssl verify none
+
+backend tenant2_console_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30021 check ssl verify none
+
+backend tenant3_api_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30030 check ssl verify none
+
+backend tenant3_console_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30031 check ssl verify none
+
+backend tenant4_api_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30040 check ssl verify none
+
+backend tenant4_console_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30041 check ssl verify none
+
+backend flask_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:7023 check
