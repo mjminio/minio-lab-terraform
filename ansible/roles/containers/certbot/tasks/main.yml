@@ -181,7 +181,7 @@
 #  tags: k3s
 
 - name: Remove certbot container (shell)
-  shell: /home/ubuntu/.local/bin/podman-compose down
+  shell: /home/{{ user }}/.local/bin/podman-compose down
   become_user: "{{ user }}"
   args:
     chdir: /home/{{ user }}/certbot

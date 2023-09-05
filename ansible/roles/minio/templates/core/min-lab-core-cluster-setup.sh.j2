@@ -14,11 +14,12 @@ docker run -itd \
    -p 9051:9090 \
    --name minio1 \
    -v /mnt/data/minio1:/data \
+   -v /home/{{ user }}/certs:/certs \
    -e "MINIO_ROOT_USER=minioadmin" \
    -e "MINIO_ROOT_PASSWORD=minioadmin" \
-   -e "MINIO_PROMETHEUS_URL=https://prom-{{ inventory_hostname }}" \
+   -e "MINIO_PROMETHEUS_URL=https://prom.{{ inventory_hostname }}:9070" \
    -e "MINIO_PROMETHEUS_JOB_ID=minio-job" \
-   quay.io/minio/minio server /data --console-address ":9090" &> /dev/null
+   quay.io/minio/minio server /data --console-address ":9090" --certs-dir /certs &> /dev/null
 
 if [ $? -eq 0 ]; then
   echo -e "${GREEN}MinIO server (minio1) started successfully.${NC}"
@@ -32,9 +33,10 @@ docker run -itd \
    -p 9053:9090 \
    --name minio2 \
    -v /mnt/data/minio2:/data \
+   -v /home/{{ user }}/certs:/certs \
    -e "MINIO_ROOT_USER=minioadmin" \
    -e "MINIO_ROOT_PASSWORD=minioadmin" \
-   quay.io/minio/minio server /data --console-address ":9090" &> /dev/null
+   quay.io/minio/minio server /data --console-address ":9090" --certs-dir /certs &> /dev/null
 
 if [ $? -eq 0 ]; then
   echo -e "${GREEN}MinIO server (minio2) started successfully.${NC}"
@@ -48,9 +50,10 @@ docker run -itd \
    -p 9055:9090 \
    --name minio3 \
    -v /mnt/data/minio3:/data \
+   -v /home/{{ user }}/certs:/certs \
    -e "MINIO_ROOT_USER=minioadmin" \
    -e "MINIO_ROOT_PASSWORD=minioadmin" \
-   quay.io/minio/minio server /data --console-address ":9090" &> /dev/null
+   quay.io/minio/minio server /data --console-address ":9090" --certs-dir /certs &> /dev/null
 
 if [ $? -eq 0 ]; then
   echo -e "${GREEN}MinIO server (minio3) started successfully.${NC}"
@@ -64,9 +67,10 @@ docker run -itd \
    -p 9057:9090 \
    --name minio4 \
    -v /mnt/data/minio4:/data \
+   -v /home/{{ user }}/certs:/certs \
    -e "MINIO_ROOT_USER=minioadmin" \
    -e "MINIO_ROOT_PASSWORD=minioadmin" \
-   quay.io/minio/minio server /data --console-address ":9090" &> /dev/null
+   quay.io/minio/minio server /data --console-address ":9090" --certs-dir /certs &> /dev/null
 
 if [ $? -eq 0 ]; then
   echo -e "${GREEN}MinIO server (minio4) started successfully.${NC}"
@@ -79,7 +83,8 @@ docker run -itd \
   -p 9070:9090 \
   --name prom \
   -v /home/{{ user }}/minio/labs/minio-for-admins/minio-monitoring/config:/etc/prometheus \
-  quay.io/prometheus/prometheus &> /dev/null
+  -v /home/{{ user }}/certs:/certs \
+  quay.io/prometheus/prometheus --config.file=/etc/prometheus/prometheus.yml --web.config.file=/etc/prometheus/web_config.yml &> /dev/null
 
 if [ $? -eq 0 ]; then
   echo -e "${GREEN}Prometheus server started successfully.${NC}"
@@ -97,13 +102,18 @@ else
 fi
 
 echo -e "${GREEN}Starting LDAP services...${NC}"
-podman-compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml up -d &> /dev/null
+/home/{{ user }}/.local/bin/podman-compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml up -d &> /dev/null
 
 if [ $? -eq 0 ]; then
   echo -e "${GREEN}LDAP services started successfully.${NC}"
 else
   echo -e "${RED}Failed to start LDAP services.${NC}"
 fi
+
+# Obtain private ip address to access Podman LDAP container
+IPV4_PRIVATE=$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+sed -i "s/openldap/${IPV4_PRIVATE}/g" /home/{{ user }}/minio/labs/minio-for-admins/minio-iam/realm-minio.json
+echo -e "${GREEN}Applied private IPv4 address ${IPV4_PRIVATE} to connect to LDAP server"
 
 echo -e "${GREEN}Starting Keycloak server...${NC}"
 docker run -itd \

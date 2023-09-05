@@ -48,7 +48,12 @@
   retries: 100
   until: apt_action is success or ('Failed to lock apt for exclusive operation' not in apt_action.msg and '/var/lib/dpkg/lock' not in apt_action.msg)
 
+- name: Set podman registries
+  shell: sudo sed -i "s/# unqualified-search-registries.*/unqualified-search-registries\ =\ [\"docker.io\"]/" /etc/containers/registries.conf
+  tags: k3s
+
 - name: Download and install podman
+  become_user: "{{ user }}"
   shell: pip3 install podman-compose --user --break-system-packages
   tags: k3s
 
