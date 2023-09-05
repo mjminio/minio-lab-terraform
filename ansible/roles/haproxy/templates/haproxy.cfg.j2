@@ -147,4 +147,4 @@ backend tenant4_console_nodeport_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:30041 check ssl verify none
 
 backend flask_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:7023 check
+        server {{ inventory_hostname }} {{ ansible_host }}:7203 check
