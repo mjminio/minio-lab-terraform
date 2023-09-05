@@ -17,6 +17,15 @@
     group: "{{ user }}"
   tags: k3s
 
+- name: Create certs directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/certs
+    state: directory
+    mode: '0777'
+    owner: "{{ user }}"
+    group: "{{ user }}"
+  tags: k3s
+
 - name: Copy kind-config file
   ansible.builtin.copy:
     src: files/kind-config.yaml
