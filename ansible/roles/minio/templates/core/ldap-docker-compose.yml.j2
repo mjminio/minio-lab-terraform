@@ -42,8 +42,8 @@ services:
         target: /openldap/ldif/bootstrap.ldif
         read_only: true
     ports:
-      - "389:389"
-      - "636:636"
+      - "9089:389"
+      - "9036:636"
     # For replication to work correctly, domainname and hostname must be
     # set correctly so that "hostname"."domainname" equates to the
     # fully-qualified domain name for the host.

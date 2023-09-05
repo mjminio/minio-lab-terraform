@@ -100,7 +100,7 @@ backend prom_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:9070 check
 
 backend ldap_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:389 check
+        server {{ inventory_hostname }} {{ ansible_host }}:9089 check
 
 backend phpldap_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:9060 check
