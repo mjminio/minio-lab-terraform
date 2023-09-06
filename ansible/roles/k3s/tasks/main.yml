@@ -35,37 +35,6 @@
     mode: '0777'
   tags: k3s
 
-#- name: Download and install k3s server
-#  shell: curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik agent --snapshotter=native" K3S_KUBECONFIG_MODE="644" sh -s -
-#  tags: k3s
-
-#- name: Download and install podman
-#  shell: sudo sed -i "s/# unqualified-search-registries.*/unqualified-search-registries\ =\ [\"docker.io\"]/" /etc/containers/registries.conf
-#  args:
-#    chdir: /home/{{ user }}/kind
-#  tags: k3s
-
-- name: Install apt packages
-  apt:
-    name:
-      - podman
-      - podman-docker
-      - python3-pip
-    state: present
-    update_cache: true
-  register: apt_action
-  retries: 100
-  until: apt_action is success or ('Failed to lock apt for exclusive operation' not in apt_action.msg and '/var/lib/dpkg/lock' not in apt_action.msg)
-
-- name: Set podman registries
-  shell: sudo sed -i "s/# unqualified-search-registries.*/unqualified-search-registries\ =\ [\"docker.io\"]/" /etc/containers/registries.conf
-  tags: k3s
-
-- name: Download and install podman
-  become_user: "{{ user }}"
-  shell: pip3 install podman-compose --user --break-system-packages
-  tags: k3s
-
 - name: Download and install kind
   shell: curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64 && chmod +x ./kind && sudo mv ./kind /usr/local/bin/kind
   args:
