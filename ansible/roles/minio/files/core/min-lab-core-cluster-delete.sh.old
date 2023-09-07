@@ -14,4 +14,4 @@ docker rm -f minio4
 sudo rm -rf /mnt/data/minio4
 docker rm -f prom
 
-docker-compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml down
+/home/ubuntu/.local/bin/podman-compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml down
