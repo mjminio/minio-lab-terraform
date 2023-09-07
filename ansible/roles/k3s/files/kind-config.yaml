@@ -10,15 +10,3 @@ nodes:
     extraMounts:
       - hostPath: /home/ubuntu/certs
         containerPath: /certs
-  - role: worker
-    extraMounts:
-      - hostPath: /home/ubuntu/certs
-        containerPath: /certs
-  - role: worker
-    extraMounts:
-      - hostPath: /home/ubuntu/certs
-        containerPath: /certs
-  - role: worker
-    extraMounts:
-      - hostPath: /home/ubuntu/certs
-        containerPath: /certs
