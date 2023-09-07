@@ -63,7 +63,7 @@
 
 - name: Download and install podman
   become_user: "{{ user }}"
-  shell: pip3 install podman-compose --user
+  shell: pip3 install podman-compose --user --break-system-packages
   tags: k3s
 
 - name: Download and install kind
