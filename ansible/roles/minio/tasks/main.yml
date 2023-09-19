@@ -113,26 +113,26 @@
 #     force: yes
 #   tags: minio
 
-## MC Client Setup
-- name: Copy minio mc client setup script
-  ansible.builtin.copy:
-    src: ../../files/{{ deployment_name }}/minio-client-setup.sh
-    dest: "/home/{{ user }}/minio/tools/deploy/mc/minio-client-setup.sh"
-    owner: "{{ user }}"
-    group: "{{ user }}"
-    mode: 0755
-    force: yes
-  tags: minio
-
-- name: Copy minio mc site repl script
-  ansible.builtin.copy:
-    src: ../../files/{{ deployment_name }}/minio-site-repl-setup.sh
-    dest: "/home/{{ user }}/minio/tools/deploy/mc/minio-site-repl-setup.sh"
-    owner: "{{ user }}"
-    group: "{{ user }}"
-    mode: 0755
-    force: yes
-  tags: minio
+### MC Client Setup
+#- name: Copy minio mc client setup script
+#  ansible.builtin.copy:
+#    src: ../../files/{{ deployment_name }}/minio-client-setup.sh
+#    dest: "/home/{{ user }}/minio/tools/deploy/mc/minio-client-setup.sh"
+#    owner: "{{ user }}"
+#    group: "{{ user }}"
+#    mode: 0755
+#    force: yes
+#  tags: minio
+#
+#- name: Copy minio mc site repl script
+#  ansible.builtin.copy:
+#    src: ../../files/{{ deployment_name }}/minio-site-repl-setup.sh
+#    dest: "/home/{{ user }}/minio/tools/deploy/mc/minio-site-repl-setup.sh"
+#    owner: "{{ user }}"
+#    group: "{{ user }}"
+#    mode: 0755
+#    force: yes
+#  tags: minio
 
 #Minio Docker Single Setup
 - name: Copy minio single docker-compose file
@@ -258,15 +258,15 @@
     directory_mode:
   tags: minio
 
-- name: Copy minio native start all script
-  ansible.builtin.copy:
-    src: ../../files/{{ deployment_name }}/minio-native-start-all.sh
-    dest: "/home/{{ user }}/minio/tools/deploy/native/minio-native-start-all.sh"
-    owner: "{{ user }}"
-    group: "{{ user }}"
-    mode: 0755
-    force: yes
-  tags: minio
+#- name: Copy minio native start all script
+#  ansible.builtin.copy:
+#    src: ../../files/{{ deployment_name }}/minio-native-start-all.sh
+#    dest: "/home/{{ user }}/minio/tools/deploy/native/minio-native-start-all.sh"
+#    owner: "{{ user }}"
+#    group: "{{ user }}"
+#    mode: 0755
+#    force: yes
+#  tags: minio
 
 #Minio Operator Setup
 - name: Copy Minio Operator script

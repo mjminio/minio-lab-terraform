@@ -42,8 +42,8 @@ services:
         target: /openldap/ldif/bootstrap.ldif
         read_only: true
     ports:
-      - "9089:389"
-      - "9036:636"
+      - "10089:389"
+      - "10036:636"
     # For replication to work correctly, domainname and hostname must be
     # set correctly so that "hostname"."domainname" equates to the
     # fully-qualified domain name for the host.
@@ -58,7 +58,7 @@ services:
       PHPLDAPADMIN_LDAP_HOSTS: "openldap"
       PHPLDAPADMIN_HTTPS: "false"
     ports:
-      - "9060:80"
+      - "10060:80"
     depends_on:
       - openldap
     networks:
