@@ -38,7 +38,7 @@ frontend https_in
         bind *:443 ssl crt /etc/haproxy/cert-bundle.pem
         acl tls req.ssl_hello_type 1
         http-request redirect scheme https unless { ssl_fc }
-        
+
         use_backend code_{{ inventory_hostname }} if { hdr(host) code.{{ inventory_hostname }} }
         use_backend minio1_{{ inventory_hostname }} if { hdr_sub(host) minio1.{{ inventory_hostname }} }
         use_backend minio1_api_{{ inventory_hostname }} if { hdr_sub(host) minio1-api.{{ inventory_hostname }} }
@@ -70,49 +70,52 @@ backend code_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:9043 check ssl verify none
 
 backend minio1_api_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:9050 check
+        server {{ inventory_hostname }} {{ ansible_host }}:10050 check
 
 backend minio1_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:9051 check
+        server {{ inventory_hostname }} {{ ansible_host }}:10051 check
 
 backend minio2_api_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:9052 check
+        server {{ inventory_hostname }} {{ ansible_host }}:10052 check
 
 backend minio2_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:9053 check
+        server {{ inventory_hostname }} {{ ansible_host }}:10053 check
 
 backend minio3_api_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:9054 check
+        server {{ inventory_hostname }} {{ ansible_host }}:10054 check
 
 backend minio3_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:9055 check
+        server {{ inventory_hostname }} {{ ansible_host }}:10055 check
 
 backend minio4_api_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:9056 check
+        server {{ inventory_hostname }} {{ ansible_host }}:10056 check
 
 backend minio4_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:9057 check
+        server {{ inventory_hostname }} {{ ansible_host }}:10057 check
 
 backend keycloak_{{ inventory_hostname }}
         server {{ inventory_hostname }} {{ ansible_host }}:9058 check ssl verify none
 
 backend prom_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:9070 check
+        server {{ inventory_hostname }} {{ ansible_host }}:10070 check
 
 backend ldap_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:9089 check
+        server {{ inventory_hostname }} {{ ansible_host }}:10089 check
 
 backend phpldap_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:9060 check
+        server {{ inventory_hostname }} {{ ansible_host }}:10060 check
+
+backend flask_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10043 check
 
 backend minio_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:9090 check
+        server {{ inventory_hostname }} {{ ansible_host }}:10090 check
 
 backend minio_api_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:9000 check
+        server {{ inventory_hostname }} {{ ansible_host }}:10000 check
 
 backend ingress_http_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:31000 check
+        server {{ inventory_hostname }} {{ ansible_host }}:9010 check
 
 backend ingress_https_{{ inventory_hostname }}
-        server {{ inventory_hostname }} {{ ansible_host }}:31001 check ssl verify none
+        server {{ inventory_hostname }} {{ ansible_host }}:9043 check ssl verify none
