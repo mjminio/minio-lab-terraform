@@ -1,0 +1,148 @@
+# Testing HAProxy Config: https://www.haproxy.com/blog/testing-your-haproxy-configuration/
+global
+        log /dev/log    local0
+        log /dev/log    local1 notice
+        chroot /var/lib/haproxy
+        stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+        stats timeout 30s
+        user haproxy
+        group haproxy
+        daemon
+
+defaults
+        log     global
+        mode    http
+        option  httplog
+        option  dontlognull
+        timeout connect 10s
+        timeout client  60s
+        timeout server  60s
+        errorfile 400 /etc/haproxy/errors/400.http
+        errorfile 403 /etc/haproxy/errors/403.http
+        errorfile 408 /etc/haproxy/errors/408.http
+        errorfile 500 /etc/haproxy/errors/500.http
+        errorfile 502 /etc/haproxy/errors/502.http
+        errorfile 503 /etc/haproxy/errors/503.http
+        errorfile 504 /etc/haproxy/errors/504.http
+
+        stats enable
+        stats hide-version
+        stats refresh 30s
+        stats show-node
+        stats auth admin:{{ haproxy_password }}
+        stats uri  /stats
+
+frontend https_in
+        mode http
+        bind *:80
+        bind *:443 ssl crt /etc/haproxy/cert-bundle.pem
+        acl tls req.ssl_hello_type 1
+
+        use_backend code_{{ inventory_hostname }} if { hdr(host) code.{{ inventory_hostname }} }
+        use_backend minio1_{{ inventory_hostname }} if { hdr_sub(host) minio1.{{ inventory_hostname }} }
+        use_backend minio1_api_{{ inventory_hostname }} if { hdr_sub(host) minio1-api.{{ inventory_hostname }} }
+        use_backend minio2_{{ inventory_hostname }} if { hdr_sub(host) minio2.{{ inventory_hostname }} }
+        use_backend minio2_api_{{ inventory_hostname }} if { hdr_sub(host) minio2-api.{{ inventory_hostname }} }
+        use_backend minio3_{{ inventory_hostname }} if { hdr_sub(host) minio3.{{ inventory_hostname }} }
+        use_backend minio3_api_{{ inventory_hostname }} if { hdr_sub(host) minio3-api.{{ inventory_hostname }} }
+        use_backend minio4_{{ inventory_hostname }} if { hdr_sub(host) minio4.{{ inventory_hostname }} }
+        use_backend minio4_api_{{ inventory_hostname }} if { hdr_sub(host) minio4-api.{{ inventory_hostname }} }
+        use_backend prom_{{ inventory_hostname }} if { hdr_sub(host) prom.{{ inventory_hostname }} }
+        use_backend ldap_{{ inventory_hostname }} if { hdr(host) ldap.{{ inventory_hostname }} }
+        use_backend phpldap_{{ inventory_hostname }} if { hdr(host) phpldap.{{ inventory_hostname }} }
+        use_backend keycloak_{{ inventory_hostname }} if { hdr(host) keycloak.{{ inventory_hostname }} }
+        use_backend minio_{{ inventory_hostname }} if { hdr(host) minio.{{ inventory_hostname }} }
+        use_backend minio_api_{{ inventory_hostname }} if { hdr(host) minio-api.{{ inventory_hostname }} }
+        use_backend ingress_http_{{ inventory_hostname }} if { hdr(host) minio-dev-http.{{ inventory_hostname }} }
+        use_backend ingress_http_{{ inventory_hostname }} if { hdr(host) minio-console-http.{{ inventory_hostname }} }
+        use_backend ingress_http_{{ inventory_hostname }} if { hdr(host) minio-api-http.{{ inventory_hostname }} }
+        use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) minio-dev-https.{{ inventory_hostname }} }
+        use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) minio-console-https.{{ inventory_hostname }} }
+        use_backend ingress_https_{{ inventory_hostname }} if { hdr(host) minio-api-https.{{ inventory_hostname }} }
+
+        use_backend tenant1_api_nodeport_{{ inventory_hostname }} if { hdr(host) tenant1-api-https.{{ inventory_hostname }} }
+        use_backend tenant1_console_nodeport_{{ inventory_hostname }} if { hdr(host) tenant1-console-https.{{ inventory_hostname }} }
+        use_backend tenant2_api_nodeport_{{ inventory_hostname }} if { hdr(host) tenant2-api-https.{{ inventory_hostname }} }
+        use_backend tenant2_console_nodeport_{{ inventory_hostname }} if { hdr(host) tenant2-console-https.{{ inventory_hostname }} }
+        use_backend tenant3_api_nodeport_{{ inventory_hostname }} if { hdr(host) tenant3-api-https.{{ inventory_hostname }} }
+        use_backend tenant3_console_nodeport_{{ inventory_hostname }} if { hdr(host) tenant3-console-https.{{ inventory_hostname }} }
+        use_backend tenant4_api_nodeport_{{ inventory_hostname }} if { hdr(host) tenant4-api-https.{{ inventory_hostname }} }
+        use_backend tenant4_console_nodeport_{{ inventory_hostname }} if { hdr(host) tenant4-console-https.{{ inventory_hostname }} }
+
+backend code_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:9043 check ssl verify none
+
+backend minio1_api_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10050 check
+
+backend minio1_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10051 check
+
+backend minio2_api_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10052 check
+
+backend minio2_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10053 check
+
+backend minio3_api_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10054 check
+
+backend minio3_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10055 check
+
+backend minio4_api_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10056 check
+
+backend minio4_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10057 check
+
+backend keycloak_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:9058 check ssl verify none
+
+backend prom_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10070 check
+
+backend ldap_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10089 check
+
+backend phpldap_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10060 check
+
+backend flask_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10043 check
+
+backend minio_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10090 check
+
+backend minio_api_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:10000 check
+
+backend ingress_http_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:31000 check
+
+backend ingress_https_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30001 check ssl verify none
+
+backend tenant1_api_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30010 check ssl verify none
+
+backend tenant1_console_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30011 check ssl verify none
+
+backend tenant2_api_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30020 check ssl verify none
+
+backend tenant2_console_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30021 check ssl verify none
+
+backend tenant3_api_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30030 check ssl verify none
+
+backend tenant3_console_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30031 check ssl verify none
+
+backend tenant4_api_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30040 check ssl verify none
+
+backend tenant4_console_nodeport_{{ inventory_hostname }}
+        server {{ inventory_hostname }} {{ ansible_host }}:30041 check ssl verify none

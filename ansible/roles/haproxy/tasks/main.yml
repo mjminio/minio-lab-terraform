@@ -95,6 +95,17 @@
     group: "{{ user }}"
     mode: '0777'
   tags: haproxy
+  when: target_environment == "cloud"
+
+- name: Copy haproxy.cfg file (datacenter)
+  template:
+    src: "haproxy-datacenter.cfg.j2"
+    dest: /etc/haproxy/haproxy.cfg
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0777'
+  tags: haproxy
+  when: target_environment == "datacenter"
 
 - name: Restart haproxy
   ansible.builtin.service:

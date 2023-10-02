@@ -26,3 +26,17 @@
     - role: k3s
     - role: minio
     - role: post-deploy
+  when: target_environment == "cloud"
+
+- hosts: lab_servers
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: lab_server
+    - role: kind
+    - role: containers/certbot
+    - role: haproxy
+    - role: code-server
+    - role: minio
+    - role: post-deploy
+  when: target_environment == "datacenter"

@@ -1,0 +1,16 @@
+# Source: https://github.com/minio/minio-service/tree/master/linux-systemd
+
+# Remote volumes to be used for MinIO server.
+MINIO_VOLUMES="/data/minio/systemd"
+# Use if you want to run MinIO on a custom port.
+MINIO_OPTS="--address :10000 --console-address :10090"
+# Root user for the server.
+MINIO_ROOT_USER=minioadmin
+# Root secret for the server.
+MINIO_ROOT_PASSWORD=minio12345
+# Set Minio Server URL
+MINIO_SERVER_URL="http://minio-api.{{ inventory_hostname }}"
+
+# set this for MinIO to reload entries with 'mc admin service restart'
+MINIO_CONFIG_ENV_FILE=/etc/default/minio
+

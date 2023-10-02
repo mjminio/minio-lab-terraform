@@ -1,0 +1,30 @@
+version: '3'
+services:
+
+  certbot:
+    image: certbot/dns-google
+    volumes:
+      - /home/{{ user }}/certbot:/etc/letsencrypt
+      - /home/{{ user }}/certbot/nginx.conf:/etc/nginx/nginx.conf
+      - /home/{{ user }}/certbot/dns-svc-acct.json:/var/dns-svc-acct.json
+    command: >-
+      certonly
+      --dns-google
+      --dns-google-credentials /var/dns-svc-acct.json
+      --email {{ letsencrypt_email }}
+      --agree-tos --no-eff-email
+      --force-renewal
+      -d {{ inventory_hostname }}
+      -d *.{{ inventory_hostname }}
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: "always"
+    volumes:
+      - /home/{{ user }}/certbot/nginx.conf:/etc/nginx/nginx.conf
+      - /home/{{ user }}/certbot:/etc/letsencrypt
+
+volumes:
+  certbot_etc:
