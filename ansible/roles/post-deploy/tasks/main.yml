@@ -18,7 +18,9 @@
 
 - name: Reboot if required
   reboot:
-  when: reboot_required_file.stat.exists == true && target_environment == "cloud"
+  when:
+  - reboot_required_file.stat.exists == true
+  - target_environment == "cloud"
   tags:
     - never
     - reboot

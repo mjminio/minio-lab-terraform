@@ -163,14 +163,18 @@
   become: true
   become_user: "{{ user }}"
   shell: cd /home/{{ user }}/dotfiles && sudo chmod +x install.sh && ./install.sh
-  when: dotfiles.stat.exists == false  && target_environment == "cloud"
+  when:
+  - dotfiles.stat.exists == false
+  - target_environment == "cloud"
   tags: lab-server, ab-dotfiles
 
 - name: Run dotfiles install (datacenter)
   become: true
   become_user: "{{ user }}"
   shell: cd /home/{{ user }}/dotfiles && sudo chmod +x install.sh && echo " --break-system-packages" | sudo tee -a install.sh && ./install.sh
-  when: dotfiles.stat.exists == false && target_environment == "datacenter"
+  when:
+  - dotfiles.stat.exists == false
+  - target_environment == "datacenter"
   tags: lab-server, ab-dotfiles
 
 - name: Create home/user/labs directory

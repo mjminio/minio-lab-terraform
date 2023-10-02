@@ -3,15 +3,19 @@
 
 - name: reload auditd
   service: name=auditd state=reloaded enabled=yes
+  when: target_environment == "cloud"
 
 - name: restart auditd
   service: name=auditd state=restarted enabled=yes
+  when: target_environment == "cloud"
 
 - name: start auditd
   service: name=auditd state=started enabled=yes
+  when: target_environment == "cloud"
 
 - name: stop auditd
   service: name=auditd state=stopped enabled=yes
+  when: target_environment == "cloud"
   
 
 - name: reload fail2ban

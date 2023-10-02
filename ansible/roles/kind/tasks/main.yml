@@ -6,7 +6,6 @@
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: '0755'
-  when: target_environment == "datacenter"
   tags: kind
 
 - name: Create kind directory
@@ -16,7 +15,6 @@
     mode: '0777'
     owner: "{{ user }}"
     group: "{{ user }}"
-  when: target_environment == "datacenter"
   tags: kind
 
 - name: Create certs directory
@@ -26,7 +24,6 @@
     mode: '0777'
     owner: "{{ user }}"
     group: "{{ user }}"
-  when: target_environment == "datacenter"
   tags: kind
 
 - name: Copy kind-config file
@@ -36,7 +33,6 @@
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: '0777'
-  when: target_environment == "datacenter"
   tags: kind
 
 - name: Install apt packages
@@ -50,25 +46,21 @@
   register: apt_action
   retries: 100
   until: apt_action is success or ('Failed to lock apt for exclusive operation' not in apt_action.msg and '/var/lib/dpkg/lock' not in apt_action.msg)
-  when: target_environment == "datacenter"
   tags: kind
 
 - name: Set podman registries
   shell: sudo sed -i "s/# unqualified-search-registries.*/unqualified-search-registries\ =\ [\"docker.io\"]/" /etc/containers/registries.conf
-  when: target_environment == "datacenter"
   tags: kind
 
 - name: Download and install podman
   become_user: "{{ user }}"
   shell: pip3 install podman-compose --user --break-system-packages
-  when: target_environment == "datacenter"
   tags: kind
 
 - name: Download and install kind
   shell: curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64 && chmod +x ./kind && sudo mv ./kind /usr/local/bin/kind
   args:
     chdir: /home/{{ user }}/kind
-  when: target_environment == "datacenter"
   tags: kind
 
 - name: Delete kind cluster
@@ -76,7 +68,6 @@
   shell: kind delete cluster
   args:
     chdir: /home/{{ user }}/kind
-  when: target_environment == "datacenter"
   tags: kind
 
 - name: Create kind cluster
@@ -84,11 +75,9 @@
   shell: kind create cluster --config kind-config.yml
   args:
     chdir: /home/{{ user }}/kind
-  when: target_environment == "datacenter"
   tags: kind
 
 - name: Install ingress-nginx
   become_user: "{{ user }}"
   shell: helm upgrade --install ingress-nginx ingress-nginx --version 4.4.2 --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace --set controller.replicaCount=1 --set controller.ingressClassResource.default=true --set controller.service.nodePorts.http=31000 --set controller.service.nodePorts.https=31001 --set controller.service.ports.http=8080 --set controller.service.ports.https=8443
-  when: target_environment == "datacenter"
   tags: kind
