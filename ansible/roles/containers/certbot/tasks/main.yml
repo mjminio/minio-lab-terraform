@@ -57,7 +57,7 @@
 
 - name: Copy google docker-compose config file (datacenter)
   template:
-    src: "docker-compose-google-datacenter.yml.j2"
+    src: "docker-compose-datacenter.yml.j2"
     dest: "/home/{{ user }}/certbot/docker-compose.yml"
     owner: "{{ user }}"
     group: "{{ user }}"

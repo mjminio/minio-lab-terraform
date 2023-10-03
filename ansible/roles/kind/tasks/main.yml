@@ -28,7 +28,7 @@
 
 - name: Copy kind-config file
   ansible.builtin.copy:
-    src: files/kind-config.yaml
+    src: files/kind-config.yml
     dest: /home/{{ user }}/kind
     owner: "{{ user }}"
     group: "{{ user }}"

@@ -1,3 +1,9 @@
+- name: Enable linger (shell)
+  shell: loginctl enable-linger {{ user }}
+  become_user: "{{ user }}"
+  when: target_environment == "datacenter"
+  tags: predeploy
+
 - name: Set SELinux to disabled state
   ansible.posix.selinux:
     state: disabled
