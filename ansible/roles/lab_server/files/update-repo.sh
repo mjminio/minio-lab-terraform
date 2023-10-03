@@ -9,5 +9,5 @@ cd /home/minio/minio/labs
 echo "updating repo"
 git fetch origin main && git reset --hard origin/main
 
-echo "updating occurences of LABSERVERNAME"
+echo "updating occurrences of LABSERVERNAME"
 find /home/minio/minio/labs -type f -exec sed -i "s/LABSERVERNAME/${HOST}/g" {} \;
