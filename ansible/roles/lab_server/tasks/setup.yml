@@ -220,16 +220,16 @@
   when: target_environment == "cloud"
   tags: lab-server
 
-- name: Copy private key (datacenter)
-  ansible.builtin.copy:
-    src: ../../../../files/{{ deployment_name }}/{{ deployment_name }}-private-key.pem
-    dest: "/home/{{ user }}/.ssh/id_rsa.pem"
-    owner: "{{ user }}"
-    group: "{{ user }}"
-    mode: 0600
-    force: yes
-  when: target_environment == "datacenter"
-  tags: lab-server
+#- name: Copy private key (datacenter)
+#  ansible.builtin.copy:
+#    src: ../../../../files/{{ deployment_name }}/{{ deployment_name }}-private-key.pem
+#    dest: "/home/{{ user }}/.ssh/id_rsa.pem"
+#    owner: "{{ user }}"
+#    group: "{{ user }}"
+#    mode: 0600
+#    force: yes
+#  when: target_environment == "datacenter"
+#  tags: lab-server
 
 - name: Install python Docker / Docker-compose module
   pip:
