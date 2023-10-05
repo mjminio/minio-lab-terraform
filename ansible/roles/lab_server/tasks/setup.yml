@@ -1,3 +1,9 @@
+- name: Enable linger (shell)
+  shell: loginctl enable-linger {{ user }}
+  become_user: "{{ user }}"
+  when: target_environment == "datacenter"
+  tags: predeploy
+
 - name: Set SELinux to disabled state
   ansible.posix.selinux:
     state: disabled
@@ -163,7 +169,18 @@
   become: true
   become_user: "{{ user }}"
   shell: cd /home/{{ user }}/dotfiles && sudo chmod +x install.sh && ./install.sh
-  when: dotfiles.stat.exists == false
+  when:
+  - dotfiles.stat.exists == false
+  - target_environment == "cloud"
+  tags: lab-server, ab-dotfiles
+
+- name: Run dotfiles install (datacenter)
+  become: true
+  become_user: "{{ user }}"
+  shell: cd /home/{{ user }}/dotfiles && sudo chmod +x install.sh && echo " --break-system-packages" | sudo tee -a install.sh && ./install.sh
+  when:
+  - dotfiles.stat.exists == false
+  - target_environment == "datacenter"
   tags: lab-server, ab-dotfiles
 
 - name: Create home/user/labs directory
@@ -200,10 +217,34 @@
     group: "{{ user }}"
     mode: 0600
     force: yes
+  when: target_environment == "cloud"
   tags: lab-server
+
+#- name: Copy private key (datacenter)
+#  ansible.builtin.copy:
+#    src: ../../../../files/{{ deployment_name }}/{{ deployment_name }}-private-key.pem
+#    dest: "/home/{{ user }}/.ssh/id_rsa.pem"
+#    owner: "{{ user }}"
+#    group: "{{ user }}"
+#    mode: 0600
+#    force: yes
+#  when: target_environment == "datacenter"
+#  tags: lab-server
 
 - name: Install python Docker / Docker-compose module
   pip:
     name:
         - docker
         - docker-compose
+  when: target_environment == "cloud"
+  tags: lab-server
+
+- name: Install python Docker / Docker-compose module (datacenter)
+  pip:
+    name:
+      - PyYAML==5.3.1
+      - docker
+      - docker-compose
+    extra_args: "--break-system-packages"
+  when: target_environment == "datacenter"
+  tags: lab-server

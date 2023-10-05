@@ -7,12 +7,12 @@
 - name: Install docker prereq apt packages
   apt:
     name:
-    - apt-transport-https
-    - ca-certificates
-    - curl
-    - software-properties-common
-    - gnupg-agent
-    - python3-pip
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - gnupg-agent
+      - python3-pip
     state: present
     update_cache: true
   register: apt_action
@@ -30,15 +30,15 @@
 
 - name: Add apt repository for stable version
   apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
-        state: present
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ubuntu_package }} stable
+    state: present
 
 - name: Install Docker
   apt:
     name:
-    - docker-ce
-    - docker-ce-cli
-    - containerd.io
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
     state: present
     update_cache: yes
   register: apt_action
@@ -48,8 +48,9 @@
 - name: Install python Docker / Docker-compose module
   pip:
     name:
-        - docker
-        - docker-compose
+      - PyYAML==5.3.1
+      - docker
+      - docker-compose
 
 - name: Add ansible user to docker group
   user:

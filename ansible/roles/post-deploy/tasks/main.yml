@@ -11,13 +11,20 @@
   stat:
     path: /var/run/reboot-required
   register: reboot_required_file
+  when: target_environment == "cloud"
   tags:
     - never
     - reboot
 
 - name: Reboot if required
   reboot:
-  when: reboot_required_file.stat.exists == true
+  when:
+  - reboot_required_file.stat.exists == true
+  - target_environment == "cloud"
   tags:
     - never
     - reboot
+
+- name: Reboot
+  reboot:
+  when: target_environment == "datacenter"

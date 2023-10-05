@@ -1,0 +1,128 @@
+#!/bin/bash
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+mkdir -p /mnt/data/minio1 /mnt/data/minio2 /mnt/data/minio3 /mnt/data/minio4
+#Create /etc/containers/nodocker to quiet msg.
+sudo touch /etc/containers/nodocker
+
+echo -e "${GREEN}Starting MinIO server (minio1)...${NC}"
+docker run -itd \
+   -p 10050:9000 \
+   -p 10051:9090 \
+   --name minio1 \
+   -v /mnt/data/minio1:/data \
+   -e "MINIO_ROOT_USER=minioadmin" \
+   -e "MINIO_ROOT_PASSWORD=minioadmin" \
+   -e "MINIO_PROMETHEUS_URL=http://prom.{{ inventory_hostname }}:10070" \
+   -e "MINIO_PROMETHEUS_JOB_ID=minio-job" \
+   quay.io/minio/minio server /data --console-address ":9090" &> /dev/null
+
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}MinIO server (minio1) started successfully.${NC}"
+else
+  echo -e "${RED}Failed to start MinIO server (minio1).${NC}"
+fi
+
+echo -e "${GREEN}Starting MinIO server (minio2)...${NC}"
+docker run -itd \
+   -p 10052:9000 \
+   -p 10053:9090 \
+   --name minio2 \
+   -v /mnt/data/minio2:/data \
+   -e "MINIO_ROOT_USER=minioadmin" \
+   -e "MINIO_ROOT_PASSWORD=minioadmin" \
+   quay.io/minio/minio server /data --console-address ":9090" &> /dev/null
+
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}MinIO server (minio2) started successfully.${NC}"
+else
+  echo -e "${RED}Failed to start MinIO server (minio2).${NC}"
+fi
+
+echo -e "${GREEN}Starting MinIO server (minio3)...${NC}"
+docker run -itd \
+   -p 10054:9000 \
+   -p 10055:9090 \
+   --name minio3 \
+   -v /mnt/data/minio3:/data \
+   -e "MINIO_ROOT_USER=minioadmin" \
+   -e "MINIO_ROOT_PASSWORD=minioadmin" \
+   quay.io/minio/minio server /data --console-address ":9090" &> /dev/null
+
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}MinIO server (minio3) started successfully.${NC}"
+else
+  echo -e "${RED}Failed to start MinIO server (minio3).${NC}"
+fi
+
+echo -e "${GREEN}Starting MinIO server (minio4)...${NC}"
+docker run -itd \
+   -p 10056:9000 \
+   -p 10057:9090 \
+   --name minio4 \
+   -v /mnt/data/minio4:/data \
+   -e "MINIO_ROOT_USER=minioadmin" \
+   -e "MINIO_ROOT_PASSWORD=minioadmin" \
+   quay.io/minio/minio server /data --console-address ":9090" &> /dev/null
+
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}MinIO server (minio4) started successfully.${NC}"
+else
+  echo -e "${RED}Failed to start MinIO server (minio4).${NC}"
+fi
+
+echo -e "${GREEN}Starting Prometheus server...${NC}"
+docker run -itd \
+  -p 10070:9090 \
+  --name prom \
+  -v /home/{{ user }}/minio/labs/minio-for-admins/minio-monitoring/config:/etc/prometheus \
+  quay.io/prometheus/prometheus --config.file=/etc/prometheus/prometheus.yml &> /dev/null
+
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}Prometheus server started successfully.${NC}"
+else
+  echo -e "${RED}Failed to start Prometheus server.${NC}"
+fi
+
+echo -e "${GREEN}Creating 'ldap' network...${NC}"
+docker network create ldap &> /dev/null
+
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}'ldap' network created successfully.${NC}"
+else
+  echo -e "${RED}Failed to create 'ldap' network.${NC}"
+fi
+
+echo -e "${GREEN}Starting LDAP services...${NC}"
+/home/{{ user }}/.local/bin/podman-compose -f /home/{{ user }}/minio/tools/deploy/core/ldap-docker-compose.yml up -d &> /dev/null
+
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}LDAP services started successfully.${NC}"
+else
+  echo -e "${RED}Failed to start LDAP services.${NC}"
+fi
+
+# Obtain private ip address to access Podman LDAP container
+IPV4_PRIVATE=$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+sed -i "s/openldap/${IPV4_PRIVATE}/g" /home/ubuntu/minio/labs/minio-for-admins/minio-iam/realm-minio.json
+echo -e "${GREEN}Applied private IPv4 address ${IPV4_PRIVATE} to connect to LDAP server"
+
+echo -e "${GREEN}Starting Keycloak server...${NC}"
+docker run -itd \
+   -p 9058:8443 \
+   --name keycloak \
+   -v /home/{{ user }}/minio/labs/minio-for-admins/minio-iam/realm-minio.json:/opt/keycloak/data/import/realm-minio.json \
+   -v /home/{{ user }}/certs/archive/{{ inventory_hostname }}/:/certs \
+   -e "KEYCLOAK_ADMIN=key" \
+   -e "KEYCLOAK_ADMIN_PASSWORD=thisisabadpass" \
+   --network ldap \
+   quay.io/keycloak/keycloak start-dev --https-certificate-file=/certs/fullchain1.pem --https-certificate-key-file=/certs/privkey1.pem --import-realm &> /dev/null
+
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}Keycloak server started successfully.${NC}"
+else
+  echo -e "${RED}Failed to start Keycloak server.${NC}"
+fi

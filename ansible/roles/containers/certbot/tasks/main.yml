@@ -55,6 +55,18 @@
   tags: certbot
   when: dns_service == "route53"
 
+- name: Copy google docker-compose config file (datacenter)
+  template:
+    src: "docker-compose-datacenter.yml.j2"
+    dest: "/home/{{ user }}/certbot/docker-compose.yml"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  tags: certbot
+  when: 
+  - dns_service == "google"
+  - target_environment == "datacenter"
+
 - name: Copy cloudflare.ini file
   ansible.builtin.copy:
     src: files/{{ deployment_name }}/cloudflare.ini
@@ -74,11 +86,28 @@
     mode: '0777'
   tags: certbot
 
+- name: Copy dns.json file
+  ansible.builtin.copy:
+    src: files/dns-svc-acct.json
+    dest: /home/{{ user }}/certbot
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0400'
+  tags: certbot
+  when: target_environment == "datacenter"
+
 - name: Check if cert has already been created
   stat:
     path: /home/{{ user }}/certs/live/{{ inventory_hostname }}/fullchain.pem
   register: certbot
   tags: certbot
+
+- name: Set podman registries
+  shell: sudo sed -i "s/# unqualified-search-registries.*/unqualified-search-registries\ =\ [\"docker.io\"]/" /etc/containers/registries.conf
+  args:
+    chdir: /home/{{ user }}/certbot
+  tags: certbot
+  when: target_environment == "datacenter"
 
 - name: Create and start certbot container (shell)
   shell: docker compose up -d
@@ -86,7 +115,20 @@
     chdir: /home/{{ user }}/certbot
   register: output
   tags: certbot
-  when: certbot.stat.exists == false
+  when: 
+  - certbot.stat.exists == false
+  - target_environment == "cloud"
+
+- name: Create and start certbot container (shell) (datacenter)
+  shell: /home/{{ user }}/.local/bin/podman-compose up -d
+  become_user: "{{ user }}"
+  args:
+    chdir: /home/{{ user }}/certbot
+  register: output
+  tags: certbot
+  when:
+  - certbot.stat.exists == false
+  - target_environment == "datacenter"
 
 - name: Waiting approx 90 seconds for certificate to be created. (It's how the certbot container works, what do you want from me?)
   wait_for:
@@ -106,7 +148,7 @@
   when: certbot.stat.exists == false
 
 - name: combine cert.pem and privkey.pem for haproxy
-  ansible.builtin.shell: 
+  ansible.builtin.shell:
     cmd: cat fullchain.pem privkey.pem | tee cert-bundle.pem
     chdir: /home/{{ user }}/certs/live/{{ inventory_hostname }}/
   tags: certbot
@@ -153,7 +195,20 @@
   args:
     chdir: /home/{{ user }}/certbot
   tags: certbot
-  when: certbot.stat.exists == false
+  when: 
+  - certbot.stat.exists == false
+  - target_environment == "cloud"
+  ignore_errors: yes
+
+- name: Remove certbot container (shell) (datacenter)
+  shell: /home/{{ user }}/.local/bin/podman-compose down
+  become_user: "{{ user }}"
+  args:
+    chdir: /home/{{ user }}/certbot
+  tags: certbot
+  when:
+  - certbot.stat.exists == false
+  - target_environment == "datacenter"
   ignore_errors: yes
 
 - name: Remove certbot directory to hide our tracks, err, for cleanliness...
